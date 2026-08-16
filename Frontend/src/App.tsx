@@ -1,73 +1,99 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-import { predictStudentSuccess } from './api/predictions';
-import { MetricCard } from './components/MetricCard';
+import { Header } from './components/Header';
+import { PresetsBar, PRESETS } from './components/PresetsBar';
+import { MetricsOverview } from './components/MetricsOverview';
 import { PredictForm } from './components/PredictForm';
 import { PredictionResult } from './components/PredictionResult';
+import { PipelineFooter } from './components/PipelineFooter';
+
+import { predictStudentSuccess } from './api/predictions';
 import type { PredictionResponse, StudentInput } from './types/prediction';
 
+const initialStudentInput: StudentInput = {
+  attendance: 72,
+  assignment_completion: 68,
+  test_average: 65,
+  coding_hours: 5,
+  goals_completed: 3,
+  projects_completed: 1,
+  interview_practice_hours: 2,
+};
+
 export default function App() {
-  const [studentInput, setStudentInput] = useState<StudentInput | null>(null);
+  const [formState, setFormState] = useState<StudentInput>(initialStudentInput);
   const [predictionResult, setPredictionResult] = useState<PredictionResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isApiConnected, setIsApiConnected] = useState(true);
 
-  async function handlePredict(input: StudentInput): Promise<void> {
+  // Run initial prediction on load so dashboard shows results immediately!
+  useEffect(() => {
+    handlePredict(initialStudentInput);
+  }, []);
+
+  const handleChangeField = <K extends keyof StudentInput>(field: K, value: number) => {
+    setFormState((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handlePredict = async (inputToPredict: StudentInput = formState) => {
     setIsSubmitting(true);
     setErrorMessage(null);
-    setStudentInput(input);
 
     try {
-      const result = await predictStudentSuccess(input);
+      const result = await predictStudentSuccess(inputToPredict);
       setPredictionResult(result);
+      if (result.is_temporary) {
+        setIsApiConnected(false);
+      } else {
+        setIsApiConnected(true);
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Prediction request failed';
       setErrorMessage(message);
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
+
+  const handleSelectPreset = (presetInput: StudentInput) => {
+    setFormState(presetInput);
+    handlePredict(presetInput);
+  };
+
+  const handleReset = () => {
+    setFormState(initialStudentInput);
+    handlePredict(initialStudentInput);
+  };
 
   return (
     <main className="app-shell">
-      <header className="hero">
-        <div>
-          <p className="eyebrow">Student Success Predictor</p>
-          <h1>Frontend dashboard for student risk prediction</h1>
-          <p className="hero-copy">
-            This interface connects to the FastAPI backend and displays the current student performance, ML prediction, and future AI experience sections.
-          </p>
-        </div>
+      <Header isApiConnected={isApiConnected} onReset={handleReset} />
 
-        <div className="hero-badges">
-          <MetricCard label="Backend" value="FastAPI" description="Temporary prediction API is connected." />
-          <MetricCard label="Frontend" value="React + TypeScript" description="Clean UI for the prediction workflow." />
-        </div>
-      </header>
+      <PresetsBar onSelectPreset={handleSelectPreset} />
 
-      <section className="dashboard-grid">
-        <PredictForm isSubmitting={isSubmitting} onSubmit={handlePredict} />
+      <MetricsOverview input={formState} />
+
+      <section className="dashboard-main-grid">
+        <PredictForm
+          formState={formState}
+          onChangeField={handleChangeField}
+          isSubmitting={isSubmitting}
+          onSubmit={() => handlePredict(formState)}
+        />
+
         <PredictionResult
-          studentInput={studentInput}
+          studentInput={formState}
           result={predictionResult}
           isLoading={isSubmitting}
           errorMessage={errorMessage}
         />
       </section>
 
-      <section className="panel architecture-panel">
-        <h2>Prediction Flow</h2>
-        <ol className="flow-list">
-          <li>Student Performance</li>
-          <li>ML Prediction</li>
-          <li>Risk Level</li>
-          <li>Probability</li>
-          <li>Main Factors</li>
-          <li>AI Explanation</li>
-          <li>7-Day Action Plan</li>
-          <li>Recommended Learning Resources</li>
-        </ol>
-      </section>
+      <PipelineFooter />
     </main>
   );
 }
