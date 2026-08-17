@@ -1,4 +1,4 @@
-import { Sparkles, Activity, RefreshCw } from 'lucide-react';
+import { Sparkles, RefreshCw, Cpu, Activity } from 'lucide-react';
 
 type HeaderProps = {
   isApiConnected: boolean;
@@ -10,26 +10,31 @@ export function Header({ isApiConnected, onReset }: HeaderProps) {
     <header className="app-navbar">
       <div className="brand-section">
         <div className="brand-icon-wrapper">
-          <Sparkles className="w-6 h-6" />
+          <Sparkles size={22} className="brand-sparkle-icon" />
         </div>
         <div className="brand-title-group">
           <h1>
-            Student Success Predictor
-            <span className="version-badge">ML Core v2.0</span>
+            <span className="gradient-brand-text">Student Success Predictor</span>
+            <span className="version-badge">
+              <Cpu size={11} /> ML Engine v2.0
+            </span>
           </h1>
-          <p className="brand-subtitle">AI-Driven Risk Analytics & Student Performance Engine</p>
+          <p className="brand-subtitle">
+            AI-Driven Student Attendance Tracking & Risk Prediction Platform
+          </p>
         </div>
       </div>
 
       <div className="navbar-actions">
-        <div className="api-status-tag">
+        <div className={`api-status-tag ${isApiConnected ? 'connected' : 'fallback'}`}>
           <div className="api-status-dot" />
-          <span>{isApiConnected ? 'FastAPI Backend Ready' : 'Interactive Mode'}</span>
+          <Activity size={13} />
+          <span>{isApiConnected ? 'FastAPI Service Online' : 'Interactive Analytics Mode'}</span>
         </div>
 
-        <button className="btn-secondary" onClick={onReset} title="Reset to initial values">
-          <RefreshCw size={14} />
-          <span>Reset Form</span>
+        <button className="btn-secondary" onClick={onReset} title="Reset dashboard to default">
+          <RefreshCw size={14} className="reset-icon" />
+          <span>Reset View</span>
         </button>
       </div>
     </header>
