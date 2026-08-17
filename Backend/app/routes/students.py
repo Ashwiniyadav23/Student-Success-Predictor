@@ -1,14 +1,31 @@
+"""Student-related API routes."""
+
+from __future__ import annotations
+from typing import List
 from fastapi import APIRouter, HTTPException
-from app.schemas.student import StudentInput, PredictionResponse
-from app.services.prediction_service import prediction_service
 
-router = APIRouter(tags=["students"])
+from app.schemas.prediction import PredictionResponse
+from app.schemas.student import StudentPredictionInput, StudentDetail
+from app.services.prediction_service import predict_student_success
+from app.services.student_service import get_all_students, get_student_by_id
 
-@router.post("/students/predict", response_model=PredictionResponse)
+router = APIRouter(prefix="/students", tags=["students"])
+
+@router.get("", response_model=List[StudentDetail])
+@router.get("/", response_model=List[StudentDetail])
+def list_students() -> List[StudentDetail]:
+    """Retrieve list of all students organized student-wise with attendance logs."""
+    return get_all_students()
+
+@router.get("/{student_id}", response_model=StudentDetail)
+def get_student(student_id: str) -> StudentDetail:
+    """Retrieve detailed student information by ID including full attendance history."""
+    student = get_student_by_id(student_id)
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    return student
+
 @router.post("/predict", response_model=PredictionResponse)
-def predict_student_status(input_data: StudentInput):
-    try:
-        result = prediction_service.get_prediction(input_data.model_dump())
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
+def predict_student(student: StudentPredictionInput) -> PredictionResponse:
+    """Predict student success probability and outcome label."""
+    return predict_student_success(student)

@@ -1,3 +1,10 @@
+export type AttendanceRecord = {
+  date: string;
+  status: 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED';
+  session_name: string;
+  notes?: string;
+};
+
 export type StudentInput = {
   attendance: number;
   assignment_completion: number;
@@ -6,6 +13,14 @@ export type StudentInput = {
   goals_completed: number;
   projects_completed: number;
   interview_practice_hours: number;
+};
+
+export type StudentProfile = StudentInput & {
+  id: string;
+  name: string;
+  email: string;
+  prediction: PredictionLabel;
+  attendance_records: AttendanceRecord[];
 };
 
 export type PredictionLabel = 'AT_RISK' | 'NEEDS_ATTENTION' | 'ON_TRACK';
