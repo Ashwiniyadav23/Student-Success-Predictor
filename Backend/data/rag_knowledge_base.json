@@ -1,0 +1,114 @@
+[
+  {
+    "id": "doc_att_01",
+    "category": "attendance_recovery",
+    "title": "7-Day Attendance Recovery & Study Habit Reset",
+    "description": "Protocol for students with attendance dropping below 75%. Focuses on morning check-ins, asynchronous session catch-up, and attendance contract agreements.",
+    "keywords": ["attendance", "absence", "missing classes", "catchup", "discipline", "attendance contract"],
+    "action_items": [
+      "Schedule mandatory 15-min morning check-in with assigned mentor.",
+      "Review recorded session archives for missed classes during the last 14 days.",
+      "Commit to a minimum 90% attendance target for the next 2 consecutive weeks."
+    ],
+    "resources": [
+      { "name": "Attendance Catch-Up Portal", "url": "https://learning.platform/attendance-reset", "type": "Portal" },
+      { "name": "Time Management for Developers Guide", "url": "https://learning.platform/time-management", "type": "Guide" }
+    ]
+  },
+  {
+    "id": "doc_att_02",
+    "category": "attendance_recovery",
+    "title": "Critical Absence Intervention & Accountability Pairing",
+    "description": "Urgent intervention for severe attendance deficits (< 50%). Assigns a peer accountability partner and emergency mentor escalation.",
+    "keywords": ["critical attendance", "severe risk", "dropout prevention", "accountability partner"],
+    "action_items": [
+      "Emergency 1-on-1 counseling session with student success manager.",
+      "Pair with a high-performing peer mentor for daily attendance ping.",
+      "Complete mandatory Attendance Recovery Assessment by Friday."
+    ],
+    "resources": [
+      { "name": "Peer Mentorship Booking", "url": "https://learning.platform/peer-mentors", "type": "Booking" },
+      { "name": "Student Wellness & Support Desk", "url": "https://learning.platform/support", "type": "Support" }
+    ]
+  },
+  {
+    "id": "doc_code_01",
+    "category": "coding_acceleration",
+    "title": "100-Minutes Daily Hands-on Coding Challenge",
+    "description": "Structured daily coding blueprint for students logging under 8 hours of weekly coding practice. Focuses on core logic building and pair programming.",
+    "keywords": ["coding hours", "low coding", "programming practice", "leetcode", "problem solving", "syntax"],
+    "action_items": [
+      "Dedicate a fixed 2-hour daily block for uninterrupted hands-on coding.",
+      "Solve 2 Easy and 1 Medium algorithm problems daily on LeetCode/HackerRank.",
+      "Push all code commits daily to GitHub to maintain active green streak."
+    ],
+    "resources": [
+      { "name": "30 Days of JS & Python Logic Drills", "url": "https://learning.platform/coding-drills", "type": "Exercises" },
+      { "name": "GitHub Commit Streak Tracker", "url": "https://github.com", "type": "Tool" }
+    ]
+  },
+  {
+    "id": "doc_code_02",
+    "category": "coding_acceleration",
+    "title": "Full-Stack Project Building & Debugging Sprint",
+    "description": "Accelerated coding methodology to turn conceptual knowledge into working software applications.",
+    "keywords": ["fullstack", "project building", "git", "debugging", "web development", "react", "fastapi"],
+    "action_items": [
+      "Build one mini CRUD project using React and FastAPI backend.",
+      "Practice debugging with browser developer tools and print logs.",
+      "Submit project for peer code review on community Discord."
+    ],
+    "resources": [
+      { "name": "Full-Stack Starter Kit Templates", "url": "https://learning.platform/starter-kits", "type": "Repository" },
+      { "name": "Clean Code & Refactoring Guide", "url": "https://learning.platform/clean-code", "type": "Article" }
+    ]
+  },
+  {
+    "id": "doc_acad_01",
+    "category": "academic_boost",
+    "title": "Assignment Catch-Up & Test Review Sprint",
+    "description": "Remediation plan for test scores below 70% or missing assignment submissions. Includes targeted topic reviews and mock quizzes.",
+    "keywords": ["assignments", "test average", "grades", "quizzes", "academic performance", "exam prep"],
+    "action_items": [
+      "Re-take practice quizzes for lowest performing topic modules.",
+      "Complete and submit all overdue assignments before weekly deadline.",
+      "Attend Thursday evening TA office hours for Q&A review."
+    ],
+    "resources": [
+      { "name": "Module Practice Quiz Archive", "url": "https://learning.platform/quizzes", "type": "Quizzes" },
+      { "name": "TA Office Hours Schedule", "url": "https://learning.platform/office-hours", "type": "Schedule" }
+    ]
+  },
+  {
+    "id": "doc_proj_01",
+    "category": "project_portfolio",
+    "title": "Portfolio Capstone Project Launchpad",
+    "description": "Framework for students with fewer than 2 completed projects to build deployment-ready portfolio applications.",
+    "keywords": ["projects", "portfolio", "capstone", "github", "deployment", "resume projects"],
+    "action_items": [
+      "Select a capstone project idea from the curated industry project library.",
+      "Implement REST API backend endpoints and modern responsive frontend.",
+      "Deploy live application on Vercel/Render and feature on LinkedIn profile."
+    ],
+    "resources": [
+      { "name": "Curated Industry Capstone Ideas", "url": "https://learning.platform/capstones", "type": "Ideas" },
+      { "name": "Free Deployment Playbook (Vercel & Render)", "url": "https://learning.platform/deploy-guide", "type": "Guide" }
+    ]
+  },
+  {
+    "id": "doc_career_01",
+    "category": "career_readiness",
+    "title": "Mock Technical Interview & Systems Design Mastery",
+    "description": "Targeted preparation strategy for students logging low interview practice hours (< 4 hrs/week). Focuses on behavioral & technical interviews.",
+    "keywords": ["interview", "mock interview", "behavioral", "system design", "career", "job placement"],
+    "action_items": [
+      "Conduct at least 2 mock technical interviews with peers on Pramp or MockInterview.",
+      "Practice STAR method answers for top 10 technical behavioral questions.",
+      "Review resume with placement counselor and refine project descriptions."
+    ],
+    "resources": [
+      { "name": "Pramp Peer Mock Interviewing", "url": "https://pramp.com", "type": "Platform" },
+      { "name": "Technical Interview Cheat Sheet", "url": "https://learning.platform/interview-cheatsheet", "type": "CheatSheet" }
+    ]
+  }
+]
