@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { User, Mail, Calendar, CheckCircle2, AlertTriangle, Clock, Search, Filter } from 'lucide-react';
 import type { StudentProfile } from '../types/prediction';
 
@@ -40,7 +41,12 @@ export const StudentSelectorBar: React.FC<StudentSelectorBarProps> = ({
   };
 
   return (
-    <div className="student-selector-container">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, delay: 0.05 }}
+      className="student-selector-container"
+    >
       <div className="student-selector-header">
         <div className="student-selector-title">
           <div className="title-icon-box">
@@ -65,73 +71,76 @@ export const StudentSelectorBar: React.FC<StudentSelectorBarProps> = ({
           </div>
 
           <div className="filter-pills-group">
-            <button
-              className={`filter-pill ${filterStatus === 'ALL' ? 'active' : ''}`}
-              onClick={() => setFilterStatus('ALL')}
-            >
-              All ({students.length})
-            </button>
-            <button
-              className={`filter-pill on-track ${filterStatus === 'ON_TRACK' ? 'active' : ''}`}
-              onClick={() => setFilterStatus('ON_TRACK')}
-            >
-              On Track
-            </button>
-            <button
-              className={`filter-pill attention ${filterStatus === 'NEEDS_ATTENTION' ? 'active' : ''}`}
-              onClick={() => setFilterStatus('NEEDS_ATTENTION')}
-            >
-              Needs Attention
-            </button>
-            <button
-              className={`filter-pill risk ${filterStatus === 'AT_RISK' ? 'active' : ''}`}
-              onClick={() => setFilterStatus('AT_RISK')}
-            >
-              At Risk
-            </button>
+            {[
+              { id: 'ALL', label: `All (${students.length})`, class: '' },
+              { id: 'ON_TRACK', label: 'On Track', class: 'on-track' },
+              { id: 'NEEDS_ATTENTION', label: 'Needs Attention', class: 'attention' },
+              { id: 'AT_RISK', label: 'At Risk', class: 'risk' },
+            ].map((f) => (
+              <button
+                key={f.id}
+                className={`filter-pill ${f.class} ${filterStatus === f.id ? 'active' : ''}`}
+                onClick={() => setFilterStatus(f.id)}
+              >
+                {f.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
       <div className="student-chips-scroll">
-        {filteredStudents.length > 0 ? (
-          filteredStudents.map((student) => {
-            const isSelected = student.id === selectedStudentId;
-            return (
-              <button
-                key={student.id}
-                className={`student-chip-btn ${isSelected ? 'selected' : ''}`}
-                onClick={() => onSelectStudent(student)}
-              >
-                <div className="chip-avatar-wrapper">
-                  <div className="chip-avatar">{student.name.charAt(0)}</div>
-                  <span className={`chip-status-dot ${student.prediction}`} />
-                </div>
+        <AnimatePresence mode="popLayout">
+          {filteredStudents.length > 0 ? (
+            filteredStudents.map((student) => {
+              const isSelected = student.id === selectedStudentId;
+              return (
+                <motion.button
+                  key={student.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  whileHover={{ y: -3, scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                  className={`student-chip-btn ${isSelected ? 'selected' : ''}`}
+                  onClick={() => onSelectStudent(student)}
+                >
+                  <div className="chip-avatar-wrapper">
+                    <div className="chip-avatar">{student.name.charAt(0)}</div>
+                    <span className={`chip-status-dot ${student.prediction}`} />
+                  </div>
 
-                <div className="chip-details">
-                  <div className="chip-top">
-                    <span className="chip-name">{student.name}</span>
-                    {getBadgeIcon(student.prediction)}
+                  <div className="chip-details">
+                    <div className="chip-top">
+                      <span className="chip-name">{student.name}</span>
+                      {getBadgeIcon(student.prediction)}
+                    </div>
+                    <div className="chip-bottom">
+                      <span className="chip-email">
+                        <Mail size={11} /> {student.email}
+                      </span>
+                      <span className="chip-att">
+                        <Calendar size={11} /> {student.attendance.toFixed(1)}%
+                      </span>
+                    </div>
                   </div>
-                  <div className="chip-bottom">
-                    <span className="chip-email">
-                      <Mail size={11} /> {student.email}
-                    </span>
-                    <span className="chip-att">
-                      <Calendar size={11} /> {student.attendance.toFixed(1)}%
-                    </span>
-                  </div>
-                </div>
-              </button>
-            );
-          })
-        ) : (
-          <div className="no-students-found">
-            <Filter size={18} />
-            <span>No student profiles match your search filter.</span>
-          </div>
-        )}
+                </motion.button>
+              );
+            })
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="no-students-found"
+            >
+              <Filter size={18} />
+              <span>No student profiles match your search filter.</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 };

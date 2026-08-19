@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { AlertTriangle, Clock, Award, Sliders } from 'lucide-react';
 import type { StudentInput } from '../types/prediction';
 
@@ -52,27 +53,37 @@ export const PRESETS: Record<string, { label: string; icon: typeof AlertTriangle
 
 export function PresetsBar({ onSelectPreset }: PresetsBarProps) {
   return (
-    <div className="presets-container">
+    <motion.div 
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.1 }}
+      className="presets-container"
+    >
       <div className="presets-label">
         <Sliders size={16} />
         <span>Quick Demo Presets:</span>
       </div>
 
       <div className="presets-buttons">
-        {Object.entries(PRESETS).map(([key, preset]) => {
+        {Object.entries(PRESETS).map(([key, preset], idx) => {
           const Icon = preset.icon;
           return (
-            <button
+            <motion.button
               key={key}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.15 + idx * 0.05 }}
+              whileHover={{ y: -2, scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
               className={`preset-btn ${preset.type}`}
               onClick={() => onSelectPreset(preset.data)}
             >
               <Icon size={15} />
               <span>{preset.label}</span>
-            </button>
+            </motion.button>
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 }

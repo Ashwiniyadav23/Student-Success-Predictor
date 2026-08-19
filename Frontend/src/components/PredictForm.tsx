@@ -1,4 +1,5 @@
 import { type FormEvent } from 'react';
+import { motion } from 'framer-motion';
 import { GraduationCap, Code2, Sparkles, SlidersHorizontal } from 'lucide-react';
 import type { StudentInput } from '../types/prediction';
 
@@ -134,12 +135,20 @@ export function PredictForm({
     onSubmit();
   }
 
-  const renderFieldCard = (config: FieldConfig) => {
+  const renderFieldCard = (config: FieldConfig, index: number) => {
     const val = Number(formState[config.key]);
     const badge = config.getBadge(val);
+    const pct = ((val - config.min) / (config.max - config.min)) * 100;
 
     return (
-      <div key={config.key} className="input-card">
+      <motion.div 
+        key={config.key}
+        initial={{ opacity: 0, x: -15 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3, delay: index * 0.05 }}
+        whileHover={{ scale: 1.01 }}
+        className="input-card"
+      >
         <div className="input-card-header">
           <div className="field-name-group">
             <span className="field-label-text">{config.label}</span>
@@ -165,6 +174,9 @@ export function PredictForm({
             step={config.step}
             value={val}
             className="range-slider"
+            style={{
+              background: `linear-gradient(to right, #6366f1 0%, #a855f7 ${pct}%, rgba(51, 65, 85, 0.85) ${pct}%, rgba(51, 65, 85, 0.85) 100%)`,
+            }}
             onChange={(e) => onChangeField(config.key, Number(e.target.value))}
           />
           <span className="min-max-label">
@@ -172,12 +184,18 @@ export function PredictForm({
             {config.unit}
           </span>
         </div>
-      </div>
+      </motion.div>
     );
   };
 
   return (
-    <form className="panel" onSubmit={handleSubmit}>
+    <motion.form 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45 }}
+      className="panel" 
+      onSubmit={handleSubmit}
+    >
       <div className="panel-header">
         <div>
           <h2 className="panel-title">
@@ -192,15 +210,21 @@ export function PredictForm({
         <GraduationCap size={16} />
         <span>Academic Performance</span>
       </div>
-      <div className="input-fields-stack">{ACADEMIC_FIELDS.map(renderFieldCard)}</div>
+      <div className="input-fields-stack">{ACADEMIC_FIELDS.map((cfg, i) => renderFieldCard(cfg, i))}</div>
 
       <div className="form-section-title">
         <Code2 size={16} />
         <span>Practical Engagement</span>
       </div>
-      <div className="input-fields-stack">{ENGAGEMENT_FIELDS.map(renderFieldCard)}</div>
+      <div className="input-fields-stack">{ENGAGEMENT_FIELDS.map((cfg, i) => renderFieldCard(cfg, i + 3))}</div>
 
-      <button type="submit" className="submit-btn" disabled={isSubmitting}>
+      <motion.button 
+        whileHover={{ scale: 1.02, filter: 'brightness(1.15)' }}
+        whileTap={{ scale: 0.98 }}
+        type="submit" 
+        className="submit-btn" 
+        disabled={isSubmitting}
+      >
         {isSubmitting ? (
           <>
             <div className="spinner" />
@@ -212,7 +236,7 @@ export function PredictForm({
             <span>Run Student Risk Prediction</span>
           </>
         )}
-      </button>
-    </form>
+      </motion.button>
+    </motion.form>
   );
 }

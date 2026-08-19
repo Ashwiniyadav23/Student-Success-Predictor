@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { GraduationCap, Code2, FolderCheck, ShieldAlert } from 'lucide-react';
 import type { StudentInput } from '../types/prediction';
 
@@ -19,61 +20,86 @@ export function MetricsOverview({ input }: MetricsOverviewProps) {
     )
   );
 
-  const healthColorClass = healthScore >= 75 ? 'emerald' : healthScore >= 55 ? 'amber' : 'risk';
+  const kpis = [
+    {
+      title: 'Overall Health Score',
+      val: `${healthScore}/100`,
+      footer: healthScore >= 75 ? 'Low Risk Status' : healthScore >= 55 ? 'Moderate Watch' : 'High Priority Alert',
+      icon: ShieldAlert,
+      color: healthScore >= 75 ? 'emerald' : healthScore >= 55 ? 'amber' : 'indigo',
+      percent: healthScore,
+    },
+    {
+      title: 'Academic Score',
+      val: `${academicAvg}%`,
+      footer: 'Avg of attendance & tests',
+      icon: GraduationCap,
+      color: 'indigo',
+      percent: academicAvg,
+    },
+    {
+      title: 'Coding Commitment',
+      val: `${input.coding_hours} hrs/wk`,
+      footer: 'Target: 10+ hrs/week',
+      icon: Code2,
+      color: 'cyan',
+      percent: Math.min(100, (input.coding_hours / 15) * 100),
+    },
+    {
+      title: 'Completed Projects',
+      val: `${input.projects_completed}`,
+      footer: `${input.goals_completed} micro-goals done`,
+      icon: FolderCheck,
+      color: 'amber',
+      percent: Math.min(100, (input.projects_completed / 5) * 100),
+    },
+  ];
 
   return (
     <div className="metrics-kpi-grid">
-      <div className="kpi-card">
-        <div className="kpi-header">
-          <span className="kpi-title">Overall Health Score</span>
-          <div className={`kpi-icon ${healthScore >= 75 ? 'emerald' : healthScore >= 55 ? 'amber' : 'indigo'}`}>
-            <ShieldAlert size={18} />
-          </div>
-        </div>
-        <div className="kpi-value">{healthScore}/100</div>
-        <div className="kpi-footer">
-          <span>{healthScore >= 75 ? 'Low Risk Status' : healthScore >= 55 ? 'Moderate Watch' : 'High Priority Alert'}</span>
-        </div>
-      </div>
+      {kpis.map((kpi, idx) => {
+        const Icon = kpi.icon;
+        return (
+          <motion.div 
+            key={kpi.title}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: idx * 0.08 }}
+            whileHover={{ y: -3, scale: 1.02 }}
+            className="kpi-card"
+          >
+            <div className="kpi-header">
+              <span className="kpi-title">{kpi.title}</span>
+              <div className={`kpi-icon ${kpi.color}`}>
+                <Icon size={18} />
+              </div>
+            </div>
+            <div className="kpi-value">{kpi.val}</div>
+            
+            {/* Animated mini fill bar */}
+            <div className="w-full bg-slate-900/80 h-1.5 rounded-full overflow-hidden my-2 border border-slate-800">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${kpi.percent}%` }}
+                transition={{ duration: 0.8, ease: 'easeOut', delay: 0.1 + idx * 0.08 }}
+                className={`h-full rounded-full ${
+                  kpi.color === 'emerald'
+                    ? 'bg-emerald-400'
+                    : kpi.color === 'amber'
+                    ? 'bg-amber-400'
+                    : kpi.color === 'cyan'
+                    ? 'bg-cyan-400'
+                    : 'bg-indigo-500'
+                }`}
+              />
+            </div>
 
-      <div className="kpi-card">
-        <div className="kpi-header">
-          <span className="kpi-title">Academic Score</span>
-          <div className="kpi-icon indigo">
-            <GraduationCap size={18} />
-          </div>
-        </div>
-        <div className="kpi-value">{academicAvg}%</div>
-        <div className="kpi-footer">
-          <span>Avg of attendance & tests</span>
-        </div>
-      </div>
-
-      <div className="kpi-card">
-        <div className="kpi-header">
-          <span className="kpi-title">Coding Commitment</span>
-          <div className="kpi-icon cyan">
-            <Code2 size={18} />
-          </div>
-        </div>
-        <div className="kpi-value">{input.coding_hours} <span style={{ fontSize: '1rem', fontWeight: 500 }}>hrs/wk</span></div>
-        <div className="kpi-footer">
-          <span>Target: 10+ hrs/week</span>
-        </div>
-      </div>
-
-      <div className="kpi-card">
-        <div className="kpi-header">
-          <span className="kpi-title">Completed Projects</span>
-          <div className="kpi-icon amber">
-            <FolderCheck size={18} />
-          </div>
-        </div>
-        <div className="kpi-value">{input.projects_completed}</div>
-        <div className="kpi-footer">
-          <span>{input.goals_completed} micro-goals done</span>
-        </div>
-      </div>
+            <div className="kpi-footer">
+              <span>{kpi.footer}</span>
+            </div>
+          </motion.div>
+        );
+      })}
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { UserCheck, CalendarCheck, AlertCircle, Clock, CheckCircle2, ShieldAlert, Award } from 'lucide-react';
 import type { StudentProfile, AttendanceRecord } from '../types/prediction';
 
@@ -63,17 +64,26 @@ export const StudentAttendanceTable: React.FC<StudentAttendanceTableProps> = ({ 
   };
 
   return (
-    <div className="student-attendance-card">
+    <motion.div 
+      key={student.id}
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="student-attendance-card"
+    >
       <div className="student-card-header">
         <div className="student-info-main">
-          <div className="student-avatar-ring">
+          <motion.div 
+            whileHover={{ scale: 1.08, rotate: 5 }}
+            className="student-avatar-ring"
+          >
             <div className="student-avatar">
               {student.name
                 .split(' ')
                 .map((n) => n[0])
                 .join('')}
             </div>
-          </div>
+          </motion.div>
 
           <div className="student-meta-details">
             <div className="student-name-row">
@@ -91,53 +101,43 @@ export const StudentAttendanceTable: React.FC<StudentAttendanceTableProps> = ({ 
         </div>
 
         <div className="student-attendance-summary">
-          <div className="attendance-percentage-box">
+          <motion.div 
+            whileHover={{ scale: 1.03 }}
+            className="attendance-percentage-box"
+          >
             <span className="attendance-val">{student.attendance.toFixed(1)}%</span>
             <span className="attendance-lbl">Overall Attendance Rate</span>
-          </div>
+          </motion.div>
         </div>
       </div>
 
       <div className="attendance-stats-pills">
-        <div className="stat-pill present">
-          <div className="stat-pill-icon">
-            <UserCheck size={16} />
-          </div>
-          <div>
-            <span className="stat-num">{presentCount}</span>
-            <span className="stat-txt">Present Days</span>
-          </div>
-        </div>
-
-        <div className="stat-pill absent">
-          <div className="stat-pill-icon">
-            <AlertCircle size={16} />
-          </div>
-          <div>
-            <span className="stat-num">{absentCount}</span>
-            <span className="stat-txt">Absences</span>
-          </div>
-        </div>
-
-        <div className="stat-pill late">
-          <div className="stat-pill-icon">
-            <Clock size={16} />
-          </div>
-          <div>
-            <span className="stat-num">{lateCount}</span>
-            <span className="stat-txt">Late Logs</span>
-          </div>
-        </div>
-
-        <div className="stat-pill total">
-          <div className="stat-pill-icon">
-            <CalendarCheck size={16} />
-          </div>
-          <div>
-            <span className="stat-num">{totalRecords}</span>
-            <span className="stat-txt">Tracked Sessions</span>
-          </div>
-        </div>
+        {[
+          { key: 'present', class: 'present', icon: UserCheck, count: presentCount, label: 'Present Days' },
+          { key: 'absent', class: 'absent', icon: AlertCircle, count: absentCount, label: 'Absences' },
+          { key: 'late', class: 'late', icon: Clock, count: lateCount, label: 'Late Logs' },
+          { key: 'total', class: 'total', icon: CalendarCheck, count: totalRecords, label: 'Tracked Sessions' },
+        ].map((item, idx) => {
+          const Icon = item.icon;
+          return (
+            <motion.div 
+              key={item.key}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: idx * 0.08 }}
+              whileHover={{ y: -3, scale: 1.02 }}
+              className={`stat-pill ${item.class}`}
+            >
+              <div className="stat-pill-icon">
+                <Icon size={16} />
+              </div>
+              <div>
+                <span className="stat-num">{item.count}</span>
+                <span className="stat-txt">{item.label}</span>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
       <div className="table-responsive">
@@ -158,7 +158,12 @@ export const StudentAttendanceTable: React.FC<StudentAttendanceTableProps> = ({ 
           <tbody>
             {records.length > 0 ? (
               records.map((rec, idx) => (
-                <tr key={`${rec.date}-${idx}`}>
+                <motion.tr 
+                  key={`${rec.date}-${idx}`}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.25, delay: idx * 0.04 }}
+                >
                   <td className="cell-date">{rec.date}</td>
                   <td className="cell-session">{rec.session_name}</td>
                   <td>
@@ -168,7 +173,7 @@ export const StudentAttendanceTable: React.FC<StudentAttendanceTableProps> = ({ 
                     </span>
                   </td>
                   <td className="cell-notes">{rec.notes || '—'}</td>
-                </tr>
+                </motion.tr>
               ))
             ) : (
               <tr>
@@ -180,6 +185,6 @@ export const StudentAttendanceTable: React.FC<StudentAttendanceTableProps> = ({ 
           </tbody>
         </table>
       </div>
-    </div>
+    </motion.div>
   );
 };
