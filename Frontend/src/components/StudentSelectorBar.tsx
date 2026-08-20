@@ -29,14 +29,21 @@ export const StudentSelectorBar: React.FC<StudentSelectorBarProps> = ({
     return matchesSearch && matchesFilter;
   });
 
+  const counts = {
+    ALL: students.length,
+    ON_TRACK: students.filter((s) => s.prediction === 'ON_TRACK').length,
+    NEEDS_ATTENTION: students.filter((s) => s.prediction === 'NEEDS_ATTENTION').length,
+    AT_RISK: students.filter((s) => s.prediction === 'AT_RISK').length,
+  };
+
   const getBadgeIcon = (pred: string) => {
     switch (pred) {
       case 'ON_TRACK':
-        return <CheckCircle2 size={13} className="status-icon-on-track" />;
+        return <CheckCircle2 size={14} className="text-emerald-400" />;
       case 'AT_RISK':
-        return <AlertTriangle size={13} className="status-icon-risk" />;
+        return <AlertTriangle size={14} className="text-rose-400" />;
       default:
-        return <Clock size={13} className="status-icon-attention" />;
+        return <Clock size={14} className="text-amber-400" />;
     }
   };
 
@@ -53,20 +60,27 @@ export const StudentSelectorBar: React.FC<StudentSelectorBarProps> = ({
             <User size={20} />
           </div>
           <div>
-            <h3>Student Directory & Logs</h3>
-            <p>Select a student profile to inspect granular attendance logs and ML predictions</p>
+            <h3 className="text-lg font-extrabold text-white flex items-center gap-2">
+              Student Directory & Performance Logs
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-semibold">
+                {students.length} Total
+              </span>
+            </h3>
+            <p className="text-xs text-slate-400">
+              Select a student profile to inspect granular attendance logs and live predictions
+            </p>
           </div>
         </div>
 
-        <div className="student-selector-controls">
-          <div className="search-input-wrapper">
-            <Search size={15} className="search-icon" />
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative flex items-center w-full sm:w-64">
+            <Search size={15} className="absolute left-3 text-slate-400 pointer-events-none" />
             <input
               type="text"
-              placeholder="Search student by name, email or ID..."
+              placeholder="Search by name, email or ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="student-search-input"
+              className="w-full pl-9 pr-3 py-2 bg-slate-900/90 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
             />
           </div>
 
@@ -144,3 +158,4 @@ export const StudentSelectorBar: React.FC<StudentSelectorBarProps> = ({
     </motion.div>
   );
 };
+

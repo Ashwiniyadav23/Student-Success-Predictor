@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 import { Header } from './components/Header';
 import { StudentSelectorBar } from './components/StudentSelectorBar';
@@ -108,40 +109,47 @@ export default function App() {
   };
 
   return (
-    <main className="app-shell">
-      <Header isApiConnected={isApiConnected} onReset={handleReset} />
+    <div className="min-h-screen bg-[#070913] text-slate-100 font-sans selection:bg-indigo-500 selection:text-white bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-950 to-slate-950">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 pb-16">
+        <Header isApiConnected={isApiConnected} onReset={handleReset} />
 
-      {students.length > 0 && (
-        <StudentSelectorBar
-          students={students}
-          selectedStudentId={selectedStudent?.id || ''}
-          onSelectStudent={handleSelectStudent}
-        />
-      )}
+        {students.length > 0 && (
+          <StudentSelectorBar
+            students={students}
+            selectedStudentId={selectedStudent?.id || ''}
+            onSelectStudent={handleSelectStudent}
+          />
+        )}
 
-      {selectedStudent && <StudentAttendanceTable student={selectedStudent} />}
+        {selectedStudent && <StudentAttendanceTable student={selectedStudent} />}
 
-      <PresetsBar onSelectPreset={handleSelectPreset} />
+        <PresetsBar onSelectPreset={handleSelectPreset} />
 
-      <MetricsOverview input={formState} />
+        <MetricsOverview input={formState} />
 
-      <section className="dashboard-main-grid">
-        <PredictForm
-          formState={formState}
-          onChangeField={handleChangeField}
-          isSubmitting={isSubmitting}
-          onSubmit={() => handlePredict(formState)}
-        />
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="lg:col-span-5">
+            <PredictForm
+              formState={formState}
+              onChangeField={handleChangeField}
+              isSubmitting={isSubmitting}
+              onSubmit={() => handlePredict(formState)}
+            />
+          </div>
 
-        <PredictionResult
-          studentInput={formState}
-          result={predictionResult}
-          isLoading={isSubmitting}
-          errorMessage={errorMessage}
-        />
-      </section>
+          <div className="lg:col-span-7 h-full">
+            <PredictionResult
+              studentInput={formState}
+              result={predictionResult}
+              isLoading={isSubmitting}
+              errorMessage={errorMessage}
+            />
+          </div>
+        </section>
 
-      <PipelineFooter />
-    </main>
+        <PipelineFooter />
+      </main>
+    </div>
   );
 }
+

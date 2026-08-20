@@ -17,23 +17,23 @@ type FieldConfig = {
   max: number;
   step: number;
   unit: string;
-  getBadge: (val: number) => { text: string; type: 'good' | 'avg' | 'low' };
+  getBadge: (val: number) => { text: string; bgStyle: string };
 };
 
 const ACADEMIC_FIELDS: FieldConfig[] = [
   {
     key: 'attendance',
-    label: 'Attendance',
+    label: 'Attendance Rate',
     min: 0,
     max: 100,
     step: 1,
     unit: '%',
     getBadge: (val) =>
       val >= 80
-        ? { text: 'Good', type: 'good' }
+        ? { text: 'Good', bgStyle: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' }
         : val >= 65
-        ? { text: 'Average', type: 'avg' }
-        : { text: 'Low Attendance', type: 'low' },
+        ? { text: 'Average', bgStyle: 'bg-amber-500/15 text-amber-400 border-amber-500/30' }
+        : { text: 'Low Attendance', bgStyle: 'bg-rose-500/15 text-rose-400 border-rose-500/30' },
   },
   {
     key: 'assignment_completion',
@@ -44,10 +44,10 @@ const ACADEMIC_FIELDS: FieldConfig[] = [
     unit: '%',
     getBadge: (val) =>
       val >= 80
-        ? { text: 'On Schedule', type: 'good' }
+        ? { text: 'On Schedule', bgStyle: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' }
         : val >= 60
-        ? { text: 'Pending Work', type: 'avg' }
-        : { text: 'Behind Schedule', type: 'low' },
+        ? { text: 'Pending Work', bgStyle: 'bg-amber-500/15 text-amber-400 border-amber-500/30' }
+        : { text: 'Behind Schedule', bgStyle: 'bg-rose-500/15 text-rose-400 border-rose-500/30' },
   },
   {
     key: 'test_average',
@@ -58,10 +58,10 @@ const ACADEMIC_FIELDS: FieldConfig[] = [
     unit: '%',
     getBadge: (val) =>
       val >= 75
-        ? { text: 'Strong', type: 'good' }
+        ? { text: 'Strong', bgStyle: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' }
         : val >= 60
-        ? { text: 'Moderate', type: 'avg' }
-        : { text: 'Low Test Scores', type: 'low' },
+        ? { text: 'Moderate', bgStyle: 'bg-amber-500/15 text-amber-400 border-amber-500/30' }
+        : { text: 'Low Test Scores', bgStyle: 'bg-rose-500/15 text-rose-400 border-rose-500/30' },
   },
 ];
 
@@ -75,10 +75,10 @@ const ENGAGEMENT_FIELDS: FieldConfig[] = [
     unit: 'hrs',
     getBadge: (val) =>
       val >= 10
-        ? { text: 'High Practice', type: 'good' }
+        ? { text: 'High Practice', bgStyle: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' }
         : val >= 5
-        ? { text: 'Moderate', type: 'avg' }
-        : { text: 'Needs Practice', type: 'low' },
+        ? { text: 'Moderate', bgStyle: 'bg-amber-500/15 text-amber-400 border-amber-500/30' }
+        : { text: 'Needs Practice', bgStyle: 'bg-rose-500/15 text-rose-400 border-rose-500/30' },
   },
   {
     key: 'goals_completed',
@@ -89,10 +89,10 @@ const ENGAGEMENT_FIELDS: FieldConfig[] = [
     unit: 'goals',
     getBadge: (val) =>
       val >= 5
-        ? { text: 'Active Finisher', type: 'good' }
+        ? { text: 'Active Finisher', bgStyle: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' }
         : val >= 2
-        ? { text: 'In Progress', type: 'avg' }
-        : { text: 'Low Goals', type: 'low' },
+        ? { text: 'In Progress', bgStyle: 'bg-amber-500/15 text-amber-400 border-amber-500/30' }
+        : { text: 'Low Goals', bgStyle: 'bg-rose-500/15 text-rose-400 border-rose-500/30' },
   },
   {
     key: 'projects_completed',
@@ -103,10 +103,10 @@ const ENGAGEMENT_FIELDS: FieldConfig[] = [
     unit: 'projects',
     getBadge: (val) =>
       val >= 3
-        ? { text: 'Portfolio Ready', type: 'good' }
+        ? { text: 'Portfolio Ready', bgStyle: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' }
         : val >= 1
-        ? { text: 'Building', type: 'avg' }
-        : { text: 'No Projects', type: 'low' },
+        ? { text: 'Building', bgStyle: 'bg-amber-500/15 text-amber-400 border-amber-500/30' }
+        : { text: 'No Projects', bgStyle: 'bg-rose-500/15 text-rose-400 border-rose-500/30' },
   },
   {
     key: 'interview_practice_hours',
@@ -117,10 +117,10 @@ const ENGAGEMENT_FIELDS: FieldConfig[] = [
     unit: 'hrs/wk',
     getBadge: (val) =>
       val >= 4
-        ? { text: 'Interview Ready', type: 'good' }
+        ? { text: 'Interview Ready', bgStyle: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' }
         : val >= 1
-        ? { text: 'Basic Practice', type: 'avg' }
-        : { text: 'No Practice', type: 'low' },
+        ? { text: 'Basic Practice', bgStyle: 'bg-amber-500/15 text-amber-400 border-amber-500/30' }
+        : { text: 'No Practice', bgStyle: 'bg-rose-500/15 text-rose-400 border-rose-500/30' },
   },
 ];
 
@@ -154,19 +154,10 @@ export function PredictForm({
             <span className="field-label-text">{config.label}</span>
             <span className={`field-badge ${badge.type}`}>{badge.text}</span>
           </div>
-          <input
-            type="number"
-            min={config.min}
-            max={config.max}
-            step={config.step}
-            value={val}
-            className="number-input-box"
-            onChange={(e) => onChangeField(config.key, Math.max(0, Number(e.target.value)))}
-          />
         </div>
 
-        <div className="slider-container">
-          <span className="min-max-label">{config.min}</span>
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] font-mono text-slate-500 font-bold">{config.min}</span>
           <input
             type="range"
             min={config.min}
@@ -179,7 +170,7 @@ export function PredictForm({
             }}
             onChange={(e) => onChangeField(config.key, Number(e.target.value))}
           />
-          <span className="min-max-label">
+          <span className="text-[10px] font-mono text-slate-400 font-bold">
             {config.max}
             {config.unit}
           </span>
@@ -198,23 +189,29 @@ export function PredictForm({
     >
       <div className="panel-header">
         <div>
-          <h2 className="panel-title">
-            <SlidersHorizontal size={20} className="gradient-accent-text" />
+          <h2 className="text-lg font-black text-white flex items-center gap-2">
+            <SlidersHorizontal size={20} className="text-indigo-400" />
             Student Input Parameters
           </h2>
-          <p className="panel-subtitle">Adjust student metrics or use top presets above</p>
+          <p className="text-xs text-slate-400">Adjust metrics or click scenario presets to test ML predictions</p>
         </div>
       </div>
 
-      <div className="form-section-title">
-        <GraduationCap size={16} />
-        <span>Academic Performance</span>
+      <div>
+        <div className="flex items-center gap-2 text-xs font-bold text-indigo-400 mb-3 uppercase tracking-wider">
+          <GraduationCap size={16} />
+          <span>Academic Performance</span>
+        </div>
+        <div className="flex flex-col gap-3">{ACADEMIC_FIELDS.map(renderFieldCard)}</div>
       </div>
       <div className="input-fields-stack">{ACADEMIC_FIELDS.map((cfg, i) => renderFieldCard(cfg, i))}</div>
 
-      <div className="form-section-title">
-        <Code2 size={16} />
-        <span>Practical Engagement</span>
+      <div>
+        <div className="flex items-center gap-2 text-xs font-bold text-cyan-400 mb-3 uppercase tracking-wider">
+          <Code2 size={16} />
+          <span>Practical Engagement</span>
+        </div>
+        <div className="flex flex-col gap-3">{ENGAGEMENT_FIELDS.map(renderFieldCard)}</div>
       </div>
       <div className="input-fields-stack">{ENGAGEMENT_FIELDS.map((cfg, i) => renderFieldCard(cfg, i + 3))}</div>
 
@@ -227,12 +224,12 @@ export function PredictForm({
       >
         {isSubmitting ? (
           <>
-            <div className="spinner" />
+            <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
             <span>Analyzing Risk Model...</span>
           </>
         ) : (
           <>
-            <Sparkles size={18} />
+            <Sparkles size={18} className="animate-pulse" />
             <span>Run Student Risk Prediction</span>
           </>
         )}
@@ -240,3 +237,4 @@ export function PredictForm({
     </motion.form>
   );
 }
+

@@ -14,16 +14,16 @@ export const StudentAttendanceTable: React.FC<StudentAttendanceTableProps> = ({ 
   const lateCount = records.filter((r) => r.status === 'LATE').length;
   const totalRecords = records.length;
 
-  const getStatusBadgeClass = (status: AttendanceRecord['status']) => {
+  const getStatusBadgeStyle = (status: AttendanceRecord['status']) => {
     switch (status) {
       case 'PRESENT':
-        return 'badge-status-present';
+        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 shadow-sm shadow-emerald-500/10';
       case 'ABSENT':
-        return 'badge-status-absent';
+        return 'bg-rose-500/10 text-rose-400 border-rose-500/30 shadow-sm shadow-rose-500/10';
       case 'LATE':
-        return 'badge-status-late';
+        return 'bg-amber-500/10 text-amber-400 border-amber-500/30 shadow-sm shadow-amber-500/10';
       default:
-        return 'badge-status-excused';
+        return 'bg-slate-800 text-slate-300 border-slate-700';
     }
   };
 
@@ -44,20 +44,20 @@ export const StudentAttendanceTable: React.FC<StudentAttendanceTableProps> = ({ 
     switch (prediction) {
       case 'ON_TRACK':
         return (
-          <span className="student-risk-badge on-track">
-            <CheckCircle2 size={13} /> On Track
+          <span className="inline-flex items-center gap-1.5 text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 uppercase tracking-wide">
+            <CheckCircle2 size={14} className="text-emerald-400" /> On Track
           </span>
         );
       case 'AT_RISK':
         return (
-          <span className="student-risk-badge risk">
-            <ShieldAlert size={13} /> At Risk
+          <span className="inline-flex items-center gap-1.5 text-xs font-extrabold px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/40 uppercase tracking-wide">
+            <ShieldAlert size={14} className="text-rose-400" /> At Risk
           </span>
         );
       default:
         return (
-          <span className="student-risk-badge attention">
-            <Clock size={13} /> Needs Attention
+          <span className="inline-flex items-center gap-1.5 text-xs font-extrabold px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/40 uppercase tracking-wide">
+            <Clock size={14} className="text-amber-400" /> Needs Attention
           </span>
         );
     }
@@ -85,16 +85,18 @@ export const StudentAttendanceTable: React.FC<StudentAttendanceTableProps> = ({ 
             </div>
           </motion.div>
 
-          <div className="student-meta-details">
-            <div className="student-name-row">
-              <h3 className="student-name">{student.name}</h3>
+          <div>
+            <div className="flex items-center gap-3 flex-wrap">
+              <h3 className="text-xl md:text-2xl font-black text-white">{student.name}</h3>
               {getPredictionBadge(student.prediction)}
             </div>
-            <p className="student-email">{student.email}</p>
-            <div className="student-id-row">
-              <span className="student-id-tag">Student ID: {student.id}</span>
-              <span className="student-stat-tag">
-                <Award size={12} /> {student.projects_completed} Projects Built
+            <p className="text-xs text-slate-400 mt-1">{student.email}</p>
+            <div className="flex items-center gap-2 mt-2 flex-wrap text-xs">
+              <span className="px-2.5 py-0.5 rounded-md bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 font-mono font-semibold">
+                ID: {student.id}
+              </span>
+              <span className="px-2.5 py-0.5 rounded-md bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold flex items-center gap-1">
+                <Award size={12} className="text-cyan-400" /> {student.projects_completed} Projects Built
               </span>
             </div>
           </div>
@@ -140,10 +142,16 @@ export const StudentAttendanceTable: React.FC<StudentAttendanceTableProps> = ({ 
         })}
       </div>
 
-      <div className="table-responsive">
-        <div className="table-header-flex">
-          <h4 className="records-table-title">Individual Attendance History & Session Log</h4>
-          <span className="records-count-badge">{records.length} Logs Recorded</span>
+      {/* Table Section */}
+      <div className="overflow-hidden">
+        <div className="flex items-center justify-between mb-3.5">
+          <h4 className="text-sm font-extrabold text-white flex items-center gap-2">
+            <FileText size={16} className="text-indigo-400" />
+            Attendance History & Session Remarks
+          </h4>
+          <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-slate-400">
+            {records.length} Logs
+          </span>
         </div>
 
         <table className="attendance-records-table">
@@ -188,3 +196,4 @@ export const StudentAttendanceTable: React.FC<StudentAttendanceTableProps> = ({ 
     </motion.div>
   );
 };
+

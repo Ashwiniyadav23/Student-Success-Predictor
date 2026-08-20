@@ -7,6 +7,14 @@ type HeaderProps = {
 };
 
 export function Header({ isApiConnected, onReset }: HeaderProps) {
+  const [isRotating, setIsRotating] = useState(false);
+
+  const handleResetClick = () => {
+    setIsRotating(true);
+    onReset();
+    setTimeout(() => setIsRotating(false), 600);
+  };
+
   return (
     <motion.header 
       initial={{ opacity: 0, y: -25 }}
@@ -34,8 +42,8 @@ export function Header({ isApiConnected, onReset }: HeaderProps) {
               <Cpu size={11} /> ML Engine v2.0
             </motion.span>
           </h1>
-          <p className="brand-subtitle">
-            AI-Driven Student Attendance Tracking & Risk Prediction Platform
+          <p className="brand-subtitle text-xs md:text-sm text-slate-400 mt-0.5">
+            AI-Driven Student Attendance Tracking & Performance Analytics Platform
           </p>
         </div>
       </div>
@@ -66,3 +74,4 @@ export function Header({ isApiConnected, onReset }: HeaderProps) {
     </motion.header>
   );
 }
+

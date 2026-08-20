@@ -9,7 +9,7 @@ export function PipelineFooter() {
     { num: '04', title: 'Probability Mapping' },
     { num: '05', title: 'Risk Factor Analysis' },
     { num: '06', title: '7-Day Action Plan' },
-    { num: '07', title: 'RAG Learning Recommendations' },
+    { num: '07', title: 'AI Recommendations' },
   ];
 
   return (
@@ -41,3 +41,4 @@ export function PipelineFooter() {
     </motion.section>
   );
 }
+
