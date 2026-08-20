@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { AlertTriangle, Clock, Award, Sliders, Zap } from 'lucide-react';
+import { AlertTriangle, Clock, Award, Sliders } from 'lucide-react';
 import type { StudentInput } from '../types/prediction';
 
 type PresetsBarProps = {
@@ -70,25 +70,26 @@ export function PresetsBar({ onSelectPreset }: PresetsBarProps) {
     <motion.div 
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.2 }}
-      className="p-4 md:px-6 rounded-2xl bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 shadow-xl mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+      transition={{ duration: 0.4, delay: 0.1 }}
+      className="presets-container"
     >
-      <div className="flex items-center gap-2.5 text-xs font-bold text-slate-300">
-        <div className="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center">
-          <Sliders size={16} />
-        </div>
-        <span>Quick Scenario Presets:</span>
+      <div className="presets-label">
+        <Sliders size={16} />
+        <span>Quick Demo Presets:</span>
       </div>
 
-      <div className="flex items-center gap-2.5 flex-wrap">
-        {Object.entries(PRESETS).map(([key, preset]) => {
+      <div className="presets-buttons">
+        {Object.entries(PRESETS).map(([key, preset], idx) => {
           const Icon = preset.icon;
           return (
             <motion.button
               key={key}
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all shadow-md ${preset.bgStyle}`}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.15 + idx * 0.05 }}
+              whileHover={{ y: -2, scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className={`preset-btn ${preset.type}`}
               onClick={() => onSelectPreset(preset.data)}
             >
               <Icon size={15} />

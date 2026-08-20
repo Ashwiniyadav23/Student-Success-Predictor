@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Mail, Calendar, CheckCircle2, AlertTriangle, Clock, Search, Filter, Sparkles } from 'lucide-react';
+import { User, Mail, Calendar, CheckCircle2, AlertTriangle, Clock, Search, Filter } from 'lucide-react';
 import type { StudentProfile } from '../types/prediction';
 
 interface StudentSelectorBarProps {
@@ -49,15 +49,15 @@ export const StudentSelectorBar: React.FC<StudentSelectorBarProps> = ({
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.1 }}
-      className="student-selector-container p-5 md:p-6 rounded-3xl bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 shadow-2xl mb-6"
+      transition={{ duration: 0.45, delay: 0.05 }}
+      className="student-selector-container"
     >
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-5">
-        <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center shadow-inner">
-            <User size={22} />
+      <div className="student-selector-header">
+        <div className="student-selector-title">
+          <div className="title-icon-box">
+            <User size={20} />
           </div>
           <div>
             <h3 className="text-lg font-extrabold text-white flex items-center gap-2">
@@ -84,34 +84,26 @@ export const StudentSelectorBar: React.FC<StudentSelectorBarProps> = ({
             />
           </div>
 
-          <div className="flex items-center p-1 bg-slate-900/90 rounded-xl border border-slate-800 gap-1 text-xs">
+          <div className="filter-pills-group">
             {[
-              { key: 'ALL', label: 'All', count: counts.ALL, activeClass: 'bg-indigo-600 text-white' },
-              { key: 'ON_TRACK', label: 'On Track', count: counts.ON_TRACK, activeClass: 'bg-emerald-600 text-white' },
-              { key: 'NEEDS_ATTENTION', label: 'Attention', count: counts.NEEDS_ATTENTION, activeClass: 'bg-amber-600 text-white' },
-              { key: 'AT_RISK', label: 'At Risk', count: counts.AT_RISK, activeClass: 'bg-rose-600 text-white' },
-            ].map((tab) => {
-              const isActive = filterStatus === tab.key;
-              return (
-                <button
-                  key={tab.key}
-                  onClick={() => setFilterStatus(tab.key)}
-                  className={`relative px-3 py-1.5 rounded-lg font-bold transition-all duration-200 flex items-center gap-1.5 ${
-                    isActive ? tab.activeClass + ' shadow-md' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                  }`}
-                >
-                  <span>{tab.label}</span>
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-black/20 text-white' : 'bg-slate-800 text-slate-400'}`}>
-                    {tab.count}
-                  </span>
-                </button>
-              );
-            })}
+              { id: 'ALL', label: `All (${students.length})`, class: '' },
+              { id: 'ON_TRACK', label: 'On Track', class: 'on-track' },
+              { id: 'NEEDS_ATTENTION', label: 'Needs Attention', class: 'attention' },
+              { id: 'AT_RISK', label: 'At Risk', class: 'risk' },
+            ].map((f) => (
+              <button
+                key={f.id}
+                className={`filter-pill ${f.class} ${filterStatus === f.id ? 'active' : ''}`}
+                onClick={() => setFilterStatus(f.id)}
+              >
+                {f.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-3.5 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-800">
+      <div className="student-chips-scroll">
         <AnimatePresence mode="popLayout">
           {filteredStudents.length > 0 ? (
             filteredStudents.map((student) => {
@@ -120,46 +112,31 @@ export const StudentSelectorBar: React.FC<StudentSelectorBarProps> = ({
                 <motion.button
                   key={student.id}
                   layout
-                  initial={{ opacity: 0, scale: 0.95 }}
+                  initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
                   whileHover={{ y: -3, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                  className={`student-chip-btn ${isSelected ? 'selected' : ''}`}
                   onClick={() => onSelectStudent(student)}
-                  className={`flex items-center gap-3.5 p-3.5 rounded-2xl min-w-[250px] border transition-all text-left relative ${
-                    isSelected
-                      ? 'bg-gradient-to-r from-indigo-950/70 via-slate-900/90 to-purple-950/70 border-indigo-500/80 shadow-lg shadow-indigo-500/20 ring-1 ring-indigo-500/50'
-                      : 'bg-slate-900/60 border-slate-800/80 hover:bg-slate-800/80 hover:border-slate-700'
-                  }`}
                 >
-                  <div className="relative flex-shrink-0">
-                    <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 text-white font-extrabold text-base flex items-center justify-center shadow-md">
-                      {student.name.charAt(0)}
-                    </div>
-                    <span
-                      className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-slate-950 ${
-                        student.prediction === 'ON_TRACK'
-                          ? 'bg-emerald-400 shadow-sm shadow-emerald-400'
-                          : student.prediction === 'AT_RISK'
-                          ? 'bg-rose-400 shadow-sm shadow-rose-400'
-                          : 'bg-amber-400 shadow-sm shadow-amber-400'
-                      }`}
-                    />
+                  <div className="chip-avatar-wrapper">
+                    <div className="chip-avatar">{student.name.charAt(0)}</div>
+                    <span className={`chip-status-dot ${student.prediction}`} />
                   </div>
 
-                  <div className="flex flex-col flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-bold text-sm text-white truncate">{student.name}</span>
+                  <div className="chip-details">
+                    <div className="chip-top">
+                      <span className="chip-name">{student.name}</span>
                       {getBadgeIcon(student.prediction)}
                     </div>
-                    <div className="flex items-center justify-between text-xs text-slate-400 mt-1">
-                      <span className="truncate max-w-[120px] text-slate-400 flex items-center gap-1">
-                        <Mail size={11} className="text-slate-500" />
-                        {student.email.split('@')[0]}
+                    <div className="chip-bottom">
+                      <span className="chip-email">
+                        <Mail size={11} /> {student.email}
                       </span>
-                      <span className="font-bold text-emerald-400 flex items-center gap-1">
-                        <Calendar size={11} className="text-emerald-500" />
-                        {student.attendance.toFixed(1)}%
+                      <span className="chip-att">
+                        <Calendar size={11} /> {student.attendance.toFixed(1)}%
                       </span>
                     </div>
                   </div>
@@ -170,10 +147,10 @@ export const StudentSelectorBar: React.FC<StudentSelectorBarProps> = ({
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex items-center justify-center gap-2 py-8 w-full text-slate-400 text-xs"
+              className="no-students-found"
             >
-              <Filter size={18} className="text-slate-500" />
-              <span>No student profiles match your search criteria.</span>
+              <Filter size={18} />
+              <span>No student profiles match your search filter.</span>
             </motion.div>
           )}
         </AnimatePresence>
