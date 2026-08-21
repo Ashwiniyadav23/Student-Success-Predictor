@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, RefreshCw, Cpu, Activity } from 'lucide-react';
+
 
 type HeaderProps = {
   isApiConnected: boolean;

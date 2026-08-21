@@ -57,11 +57,10 @@ export type RAGRecommendation = {
   retrieved_documents: RAGDocument[];
   action_plan: RAGActionPlanDay[];
   resources: RAGResource[];
-  rag_metadata: {
-    engine: string;
-    indexed_documents_count: number;
-    top_k_retrieved: number;
-  };
+  rag_metadata: Record<string, unknown>;
+  llm_summary?: string;
+  llm_coaching_advice?: string;
+  llm_provider?: string;
 };
 
 export type PredictionResponse = {
@@ -71,3 +70,5 @@ export type PredictionResponse = {
   note?: string;
   rag_recommendations?: RAGRecommendation;
 };
+
+

@@ -3,7 +3,9 @@
 **/*.pyc
 Backend/venv/
 Backend/.venv/
+Backend/data/chroma_store/
 *.db
+
 
 # Node / Vite
 Frontend/node_modules/

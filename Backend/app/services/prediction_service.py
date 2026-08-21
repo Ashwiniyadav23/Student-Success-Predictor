@@ -13,6 +13,7 @@ from app.schemas.prediction import (
     RAGRecommendationSchema,
 )
 from app.schemas.student import StudentPredictionInput
+from app.services.ai_service import generate_recommendation
 from app.services.rag_service import rag_engine
 
 
@@ -67,14 +68,15 @@ def predict_student_success(student: StudentPredictionInput) -> PredictionRespon
     }
     prediction = max(probability_map, key=probability_map.get)
 
-    # Perform RAG Retrieval from Knowledge Base
-    rag_data = rag_engine.retrieve_recommendations(student)
+    # Perform RAG Retrieval & LLM Synthesis
+    rag_data = generate_recommendation(student, prediction=prediction)
     rag_recommendation_model = RAGRecommendationSchema(**rag_data)
 
     return PredictionResponse(
         prediction=prediction,
         probabilities=probabilities,
         is_temporary=False,
-        note="ML Risk Classification & Vector RAG Recommendation Engine Online.",
+        note="ML Risk Classification & Vector RAG + LLM Recommendation Engine Online.",
         rag_recommendations=rag_recommendation_model,
     )
+

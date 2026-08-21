@@ -38,6 +38,10 @@ class RAGRecommendationSchema(BaseModel):
     action_plan: List[RAGActionPlanDaySchema]
     resources: List[RAGResourceSchema]
     rag_metadata: Dict[str, Any]
+    llm_summary: Optional[str] = None
+    llm_coaching_advice: Optional[str] = None
+    llm_provider: Optional[str] = None
+
 
 
 class PredictionResponse(BaseModel):
