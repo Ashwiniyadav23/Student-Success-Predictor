@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { GraduationCap, Code2, FolderCheck, ShieldAlert, Activity, Sparkles, TrendingUp } from 'lucide-react';
+import { GraduationCap, Code2, FolderCheck, ShieldAlert } from 'lucide-react';
 import type { StudentInput } from '../types/prediction';
 
 type MetricsOverviewProps = {
@@ -20,54 +20,38 @@ export function MetricsOverview({ input }: MetricsOverviewProps) {
     )
   );
 
-  const getHealthBadge = (score: number) => {
-    if (score >= 75) {
-      return { label: 'Low Risk Status', color: 'emerald', bg: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400', progress: 'bg-emerald-500' };
-    }
-    if (score >= 55) {
-      return { label: 'Moderate Watch', color: 'amber', bg: 'bg-amber-500/10 border-amber-500/30 text-amber-400', progress: 'bg-amber-500' };
-    }
-    return { label: 'High Priority Alert', color: 'rose', bg: 'bg-rose-500/10 border-rose-500/30 text-rose-400', progress: 'bg-rose-500' };
-  };
-
-  const healthBadge = getHealthBadge(healthScore);
-
   const kpis = [
     {
-      title: 'Overall Health Index',
-      value: `${healthScore}/100`,
-      icon: <ShieldAlert size={20} />,
-      footer: healthBadge.label,
-      bg: healthBadge.bg,
-      progress: healthScore,
-      progressBarBg: healthBadge.progress,
+      title: 'Overall Health Score',
+      val: `${healthScore}/100`,
+      footer: healthScore >= 75 ? 'Low Risk Status' : healthScore >= 55 ? 'Moderate Watch' : 'High Priority Alert',
+      icon: ShieldAlert,
+      color: healthScore >= 75 ? 'emerald' : healthScore >= 55 ? 'amber' : 'indigo',
+      percent: healthScore,
     },
     {
       title: 'Academic Score',
-      value: `${academicAvg}%`,
-      icon: <GraduationCap size={20} />,
-      footer: 'Avg of attendance & test scores',
-      bg: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400',
-      progress: academicAvg,
-      progressBarBg: 'bg-indigo-500',
+      val: `${academicAvg}%`,
+      footer: 'Avg of attendance & tests',
+      icon: GraduationCap,
+      color: 'indigo',
+      percent: academicAvg,
     },
     {
       title: 'Coding Commitment',
-      value: `${input.coding_hours} hrs`,
-      icon: <Code2 size={20} />,
+      val: `${input.coding_hours} hrs/wk`,
       footer: 'Target: 10+ hrs/week',
-      bg: 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400',
-      progress: Math.min(100, Math.round((input.coding_hours / 15) * 100)),
-      progressBarBg: 'bg-cyan-500',
+      icon: Code2,
+      color: 'cyan',
+      percent: Math.min(100, (input.coding_hours / 15) * 100),
     },
     {
       title: 'Completed Projects',
-      value: `${input.projects_completed} Built`,
-      icon: <FolderCheck size={20} />,
-      footer: `${input.goals_completed} micro-goals completed`,
-      bg: 'bg-purple-500/10 border-purple-500/30 text-purple-400',
-      progress: Math.min(100, Math.round((input.projects_completed / 5) * 100)),
-      progressBarBg: 'bg-purple-500',
+      val: `${input.projects_completed}`,
+      footer: `${input.goals_completed} micro-goals done`,
+      icon: FolderCheck,
+      color: 'amber',
+      percent: Math.min(100, (input.projects_completed / 5) * 100),
     },
   ];
 
@@ -89,21 +73,25 @@ export function MetricsOverview({ input }: MetricsOverviewProps) {
                 {kpi.icon}
               </div>
             </div>
-
-            <div className="text-2xl md:text-3xl font-black text-white font-mono tracking-tight my-1">
-              {kpi.value}
-            </div>
-
-            {/* Visual progress bar */}
-            <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden my-2.5 border border-slate-800">
-              <motion.div 
+            <div className="kpi-value">{kpi.val}</div>
+            
+            {/* Animated mini fill bar */}
+            <div className="w-full bg-slate-900/80 h-1.5 rounded-full overflow-hidden my-2 border border-slate-800">
+              <motion.div
                 initial={{ width: 0 }}
-                animate={{ width: `${kpi.progress}%` }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-                className={`h-full rounded-full ${kpi.progressBarBg}`}
+                animate={{ width: `${kpi.percent}%` }}
+                transition={{ duration: 0.8, ease: 'easeOut', delay: 0.1 + idx * 0.08 }}
+                className={`h-full rounded-full ${
+                  kpi.color === 'emerald'
+                    ? 'bg-emerald-400'
+                    : kpi.color === 'amber'
+                    ? 'bg-amber-400'
+                    : kpi.color === 'cyan'
+                    ? 'bg-cyan-400'
+                    : 'bg-indigo-500'
+                }`}
               />
             </div>
-          </div>
 
           <div className="w-full text-[11px] font-bold text-slate-400 flex items-center justify-between pt-2.5 border-t border-slate-800/50 mt-2">
             <span>{kpi.footer}</span>

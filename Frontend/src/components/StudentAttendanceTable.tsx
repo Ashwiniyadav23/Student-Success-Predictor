@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { UserCheck, CalendarCheck, AlertCircle, Clock, CheckCircle2, ShieldAlert, Award, FileText } from 'lucide-react';
+import { UserCheck, CalendarCheck, AlertCircle, Clock, CheckCircle2, ShieldAlert, Award } from 'lucide-react';
 import type { StudentProfile, AttendanceRecord } from '../types/prediction';
 
 interface StudentAttendanceTableProps {
@@ -69,19 +69,21 @@ export const StudentAttendanceTable: React.FC<StudentAttendanceTableProps> = ({ 
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="p-6 rounded-3xl bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 shadow-2xl mb-6"
+      className="student-attendance-card"
     >
-      {/* Student Profile Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-800/80 mb-6">
-        <div className="flex items-center gap-4">
-          <div className="relative p-1 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 shadow-lg shadow-indigo-500/25">
-            <div className="w-16 h-16 rounded-full bg-slate-950 text-white font-extrabold text-xl flex items-center justify-center">
+      <div className="student-card-header">
+        <div className="student-info-main">
+          <motion.div 
+            whileHover={{ scale: 1.08, rotate: 5 }}
+            className="student-avatar-ring"
+          >
+            <div className="student-avatar">
               {student.name
                 .split(' ')
                 .map((n) => n[0])
                 .join('')}
             </div>
-          </div>
+          </motion.div>
 
           <div>
             <div className="flex items-center gap-3 flex-wrap">
@@ -100,78 +102,44 @@ export const StudentAttendanceTable: React.FC<StudentAttendanceTableProps> = ({ 
           </div>
         </div>
 
-        {/* Rate Gauge Badge */}
-        <motion.div 
-          whileHover={{ scale: 1.03 }}
-          className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-br from-emerald-500/15 via-slate-900 to-slate-950 border border-emerald-500/30 shadow-lg shadow-emerald-500/10 min-w-[210px]"
-        >
-          <div className="relative w-16 h-16 flex items-center justify-center">
-            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 60 60">
-              <circle
-                cx="30"
-                cy="30"
-                r="25"
-                stroke="currentColor"
-                strokeWidth="5"
-                className="text-slate-800"
-                fill="transparent"
-              />
-              <motion.circle
-                cx="30"
-                cy="30"
-                r="25"
-                stroke="currentColor"
-                strokeWidth="5"
-                strokeDasharray={157}
-                initial={{ strokeDashoffset: 157 }}
-                animate={{ strokeDashoffset: 157 - (157 * student.attendance) / 100 }}
-                transition={{ duration: 1.2, ease: 'easeOut' }}
-                strokeLinecap="round"
-                className="text-emerald-400"
-                fill="transparent"
-              />
-            </svg>
-            <span className="absolute text-xs font-black text-white font-mono">
-              {Math.round(student.attendance)}%
-            </span>
-          </div>
-
-          <div className="flex flex-col text-left">
-            <span className="text-2xl font-black text-emerald-400 tracking-tight font-mono leading-none">
-              {student.attendance.toFixed(1)}%
-            </span>
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mt-1">
-              Overall Attendance Rate
-            </span>
-          </div>
-        </motion.div>
+        <div className="student-attendance-summary">
+          <motion.div 
+            whileHover={{ scale: 1.03 }}
+            className="attendance-percentage-box"
+          >
+            <span className="attendance-val">{student.attendance.toFixed(1)}%</span>
+            <span className="attendance-lbl">Overall Attendance Rate</span>
+          </motion.div>
+        </div>
       </div>
 
-      {/* Stats Summary Pills */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 mb-6">
+      <div className="attendance-stats-pills">
         {[
-          { icon: <UserCheck size={18} />, num: presentCount, label: 'Present Days', color: 'emerald', bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' },
-          { icon: <AlertCircle size={18} />, num: absentCount, label: 'Absences', color: 'rose', bg: 'bg-rose-500/10 border-rose-500/20 text-rose-400' },
-          { icon: <Clock size={18} />, num: lateCount, label: 'Late Logs', color: 'amber', bg: 'bg-amber-500/10 border-amber-500/20 text-amber-400' },
-          { icon: <CalendarCheck size={18} />, num: totalRecords, label: 'Tracked Sessions', color: 'indigo', bg: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400' },
-        ].map((stat, idx) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: idx * 0.05 }}
-            whileHover={{ y: -2 }}
-            className={`p-3.5 rounded-2xl border flex items-center gap-3 bg-slate-900/60 ${stat.bg}`}
-          >
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${stat.bg}`}>
-              {stat.icon}
-            </div>
-            <div>
-              <span className="text-lg font-black tracking-tight block font-mono leading-none">{stat.num}</span>
-              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mt-1">{stat.label}</span>
-            </div>
-          </motion.div>
-        ))}
+          { key: 'present', class: 'present', icon: UserCheck, count: presentCount, label: 'Present Days' },
+          { key: 'absent', class: 'absent', icon: AlertCircle, count: absentCount, label: 'Absences' },
+          { key: 'late', class: 'late', icon: Clock, count: lateCount, label: 'Late Logs' },
+          { key: 'total', class: 'total', icon: CalendarCheck, count: totalRecords, label: 'Tracked Sessions' },
+        ].map((item, idx) => {
+          const Icon = item.icon;
+          return (
+            <motion.div 
+              key={item.key}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: idx * 0.08 }}
+              whileHover={{ y: -3, scale: 1.02 }}
+              className={`stat-pill ${item.class}`}
+            >
+              <div className="stat-pill-icon">
+                <Icon size={16} />
+              </div>
+              <div>
+                <span className="stat-num">{item.count}</span>
+                <span className="stat-txt">{item.label}</span>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Table Section */}
@@ -186,47 +154,44 @@ export const StudentAttendanceTable: React.FC<StudentAttendanceTableProps> = ({ 
           </span>
         </div>
 
-        <div className="overflow-x-auto rounded-2xl border border-slate-800/80 bg-slate-950/60">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="bg-slate-900/90 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-800">
-                <th className="p-3.5">Date</th>
-                <th className="p-3.5">Session / Workshop</th>
-                <th className="p-3.5">Status</th>
-                <th className="p-3.5">Mentor Notes & Remarks</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/50">
-              {records.length > 0 ? (
-                records.map((rec, idx) => (
-                  <motion.tr 
-                    key={`${rec.date}-${idx}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: idx * 0.05 }}
-                    className="hover:bg-slate-900/40 transition-colors"
-                  >
-                    <td className="p-3.5 font-mono font-bold text-indigo-300">{rec.date}</td>
-                    <td className="p-3.5 font-semibold text-slate-200">{rec.session_name}</td>
-                    <td className="p-3.5">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-extrabold border ${getStatusBadgeStyle(rec.status)}`}>
-                        {getStatusIcon(rec.status)}
-                        <span>{rec.status}</span>
-                      </span>
-                    </td>
-                    <td className="p-3.5 text-slate-400">{rec.notes || '—'}</td>
-                  </motion.tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={4} className="p-6 text-center text-slate-500">
-                    No individual attendance records logged for this student.
+        <table className="attendance-records-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Session / Workshop</th>
+              <th>Status</th>
+              <th>Mentor Notes & Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            {records.length > 0 ? (
+              records.map((rec, idx) => (
+                <motion.tr 
+                  key={`${rec.date}-${idx}`}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.25, delay: idx * 0.04 }}
+                >
+                  <td className="cell-date">{rec.date}</td>
+                  <td className="cell-session">{rec.session_name}</td>
+                  <td>
+                    <span className={`status-badge ${getStatusBadgeClass(rec.status)}`}>
+                      {getStatusIcon(rec.status)}
+                      <span>{rec.status}</span>
+                    </span>
                   </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                  <td className="cell-notes">{rec.notes || '—'}</td>
+                </motion.tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="no-records">
+                  No individual attendance records logged for this student.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </motion.div>
   );

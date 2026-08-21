@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Cpu, ArrowRight } from 'lucide-react';
+import { Cpu } from 'lucide-react';
 
 export function PipelineFooter() {
   const steps = [
@@ -14,37 +14,27 @@ export function PipelineFooter() {
 
   return (
     <motion.section 
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 25 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.3 }}
-      className="p-6 rounded-3xl bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 shadow-2xl mt-8"
+      transition={{ duration: 0.5, delay: 0.2 }}
+      className="architecture-footer-panel"
     >
-      <div className="flex items-center gap-3 mb-5">
-        <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center">
-          <Cpu size={22} className="animate-spin-slow" />
-        </div>
-        <div>
-          <h3 className="text-base font-black text-white">End-to-End Prediction & Intervention Architecture</h3>
-          <p className="text-xs text-slate-400">Automated machine learning inference and recommendations workflow</p>
-        </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        <Cpu size={20} className="gradient-accent-text" />
+        <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>End-to-End Prediction & Intervention Pipeline</h3>
       </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
+      <div className="pipeline-steps">
         {steps.map((step, idx) => (
-          <motion.div
+          <motion.div 
             key={step.num}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3, delay: idx * 0.05 }}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.25 + idx * 0.05 }}
             whileHover={{ y: -3, scale: 1.03 }}
-            className="p-3 rounded-2xl bg-slate-900/70 border border-slate-800/80 flex flex-col justify-between gap-2 text-left relative group hover:border-indigo-500/50 hover:bg-slate-900 transition-all"
+            className="pipeline-step-card"
           >
-            <span className="text-[10px] font-extrabold font-mono text-indigo-400 tracking-wider">
-              STEP {step.num}
-            </span>
-            <span className="text-xs font-bold text-slate-200 leading-tight">
-              {step.title}
-            </span>
+            <span className="step-num">STEP {step.num}</span>
+            <span>{step.title}</span>
           </motion.div>
         ))}
       </div>

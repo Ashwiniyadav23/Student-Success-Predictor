@@ -1,6 +1,6 @@
 import { type FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import { GraduationCap, Code2, Sparkles, SlidersHorizontal, Plus, Minus } from 'lucide-react';
+import { GraduationCap, Code2, Sparkles, SlidersHorizontal } from 'lucide-react';
 import type { StudentInput } from '../types/prediction';
 
 type PredictFormProps = {
@@ -135,54 +135,24 @@ export function PredictForm({
     onSubmit();
   }
 
-  const handleStep = (config: FieldConfig, delta: number) => {
-    const currentVal = Number(formState[config.key]);
-    const newVal = Math.min(config.max, Math.max(config.min, currentVal + delta));
-    onChangeField(config.key, Number(newVal.toFixed(1)));
-  };
-
-  const renderFieldCard = (config: FieldConfig) => {
+  const renderFieldCard = (config: FieldConfig, index: number) => {
     const val = Number(formState[config.key]);
     const badge = config.getBadge(val);
+    const pct = ((val - config.min) / (config.max - config.min)) * 100;
 
     return (
       <motion.div 
         key={config.key}
+        initial={{ opacity: 0, x: -15 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3, delay: index * 0.05 }}
         whileHover={{ scale: 1.01 }}
-        className="p-4 rounded-2xl bg-slate-900/70 border border-slate-800/80 shadow-md flex flex-col gap-3"
+        className="input-card"
       >
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-extrabold text-slate-200">{config.label}</span>
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${badge.bgStyle}`}>
-              {badge.text}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-xl border border-slate-800">
-            <button
-              type="button"
-              onClick={() => handleStep(config, -config.step)}
-              className="w-5 h-5 rounded-md bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-xs font-bold"
-            >
-              <Minus size={11} />
-            </button>
-            <input
-              type="number"
-              min={config.min}
-              max={config.max}
-              step={config.step}
-              value={val}
-              className="w-14 bg-transparent text-center text-xs font-mono font-bold text-indigo-300 focus:outline-none"
-              onChange={(e) => onChangeField(config.key, Math.max(0, Number(e.target.value)))}
-            />
-            <button
-              type="button"
-              onClick={() => handleStep(config, config.step)}
-              className="w-5 h-5 rounded-md bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-xs font-bold"
-            >
-              <Plus size={11} />
-            </button>
+        <div className="input-card-header">
+          <div className="field-name-group">
+            <span className="field-label-text">{config.label}</span>
+            <span className={`field-badge ${badge.type}`}>{badge.text}</span>
           </div>
         </div>
 
@@ -194,7 +164,10 @@ export function PredictForm({
             max={config.max}
             step={config.step}
             value={val}
-            className="w-full accent-indigo-500 bg-slate-950 h-2 rounded-lg cursor-pointer"
+            className="range-slider"
+            style={{
+              background: `linear-gradient(to right, #6366f1 0%, #a855f7 ${pct}%, rgba(51, 65, 85, 0.85) ${pct}%, rgba(51, 65, 85, 0.85) 100%)`,
+            }}
             onChange={(e) => onChangeField(config.key, Number(e.target.value))}
           />
           <span className="text-[10px] font-mono text-slate-400 font-bold">
@@ -211,10 +184,10 @@ export function PredictForm({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45 }}
-      className="p-6 rounded-3xl bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 shadow-2xl flex flex-col gap-6"
+      className="panel" 
       onSubmit={handleSubmit}
     >
-      <div className="flex items-center justify-between pb-4 border-b border-slate-800/80">
+      <div className="panel-header">
         <div>
           <h2 className="text-lg font-black text-white flex items-center gap-2">
             <SlidersHorizontal size={20} className="text-indigo-400" />
@@ -231,6 +204,7 @@ export function PredictForm({
         </div>
         <div className="flex flex-col gap-3">{ACADEMIC_FIELDS.map(renderFieldCard)}</div>
       </div>
+      <div className="input-fields-stack">{ACADEMIC_FIELDS.map((cfg, i) => renderFieldCard(cfg, i))}</div>
 
       <div>
         <div className="flex items-center gap-2 text-xs font-bold text-cyan-400 mb-3 uppercase tracking-wider">
@@ -239,12 +213,13 @@ export function PredictForm({
         </div>
         <div className="flex flex-col gap-3">{ENGAGEMENT_FIELDS.map(renderFieldCard)}</div>
       </div>
+      <div className="input-fields-stack">{ENGAGEMENT_FIELDS.map((cfg, i) => renderFieldCard(cfg, i + 3))}</div>
 
       <motion.button 
-        whileHover={{ scale: 1.02 }}
+        whileHover={{ scale: 1.02, filter: 'brightness(1.15)' }}
         whileTap={{ scale: 0.98 }}
         type="submit" 
-        className="w-full py-3.5 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 disabled:opacity-50 transition-all cursor-pointer mt-2" 
+        className="submit-btn" 
         disabled={isSubmitting}
       >
         {isSubmitting ? (
