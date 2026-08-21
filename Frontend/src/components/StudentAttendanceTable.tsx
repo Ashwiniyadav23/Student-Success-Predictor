@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { UserCheck, CalendarCheck, AlertCircle, Clock, CheckCircle2, ShieldAlert, Award } from 'lucide-react';
+import { UserCheck, CalendarCheck, AlertCircle, Clock, CheckCircle2, ShieldAlert, Award, FileText } from 'lucide-react';
 import type { StudentProfile, AttendanceRecord } from '../types/prediction';
+
 
 interface StudentAttendanceTableProps {
   student: StudentProfile;
@@ -175,7 +176,8 @@ export const StudentAttendanceTable: React.FC<StudentAttendanceTableProps> = ({ 
                   <td className="cell-date">{rec.date}</td>
                   <td className="cell-session">{rec.session_name}</td>
                   <td>
-                    <span className={`status-badge ${getStatusBadgeClass(rec.status)}`}>
+                    <span className={`status-badge ${getStatusBadgeStyle(rec.status)}`}>
+
                       {getStatusIcon(rec.status)}
                       <span>{rec.status}</span>
                     </span>

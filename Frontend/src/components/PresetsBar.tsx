@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
-import { AlertTriangle, Clock, Award, Sliders } from 'lucide-react';
+import { AlertTriangle, Clock, Award, Sliders, Zap } from 'lucide-react';
 import type { StudentInput } from '../types/prediction';
+
 
 type PresetsBarProps = {
   onSelectPreset: (preset: StudentInput) => void;
@@ -89,7 +90,8 @@ export function PresetsBar({ onSelectPreset }: PresetsBarProps) {
               transition={{ duration: 0.3, delay: 0.15 + idx * 0.05 }}
               whileHover={{ y: -2, scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              className={`preset-btn ${preset.type}`}
+              className={`preset-btn ${preset.bgStyle}`}
+
               onClick={() => onSelectPreset(preset.data)}
             >
               <Icon size={15} />

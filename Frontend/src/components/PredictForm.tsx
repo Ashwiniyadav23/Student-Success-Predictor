@@ -152,7 +152,7 @@ export function PredictForm({
         <div className="input-card-header">
           <div className="field-name-group">
             <span className="field-label-text">{config.label}</span>
-            <span className={`field-badge ${badge.type}`}>{badge.text}</span>
+            <span className={`field-badge ${badge.bgStyle}`}>{badge.text}</span>
           </div>
         </div>
 
@@ -202,18 +202,17 @@ export function PredictForm({
           <GraduationCap size={16} />
           <span>Academic Performance</span>
         </div>
-        <div className="flex flex-col gap-3">{ACADEMIC_FIELDS.map(renderFieldCard)}</div>
+        <div className="flex flex-col gap-3">{ACADEMIC_FIELDS.map((cfg, i) => renderFieldCard(cfg, i))}</div>
       </div>
-      <div className="input-fields-stack">{ACADEMIC_FIELDS.map((cfg, i) => renderFieldCard(cfg, i))}</div>
 
       <div>
         <div className="flex items-center gap-2 text-xs font-bold text-cyan-400 mb-3 uppercase tracking-wider">
           <Code2 size={16} />
           <span>Practical Engagement</span>
         </div>
-        <div className="flex flex-col gap-3">{ENGAGEMENT_FIELDS.map(renderFieldCard)}</div>
+        <div className="flex flex-col gap-3">{ENGAGEMENT_FIELDS.map((cfg, i) => renderFieldCard(cfg, i + 3))}</div>
       </div>
-      <div className="input-fields-stack">{ENGAGEMENT_FIELDS.map((cfg, i) => renderFieldCard(cfg, i + 3))}</div>
+
 
       <motion.button 
         whileHover={{ scale: 1.02, filter: 'brightness(1.15)' }}

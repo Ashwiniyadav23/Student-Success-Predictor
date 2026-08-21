@@ -25,9 +25,17 @@ def predict_student(student: StudentPredictionInput) -> PredictionResponse:
 
 @router.post("/rag-recommendations", response_model=RAGRecommendationSchema)
 def get_rag_recommendations(student: StudentPredictionInput) -> RAGRecommendationSchema:
-    """Retrieve vector RAG educational intervention recommendations."""
+    """Retrieve vector RAG & LLM synthesized educational intervention recommendations."""
     data = generate_recommendation(student)
     return RAGRecommendationSchema(**data)
+
+@router.post("/llm-advice", response_model=RAGRecommendationSchema)
+def get_llm_advice(student: StudentPredictionInput) -> RAGRecommendationSchema:
+    """Retrieve personalized LLM coaching advice synthesized over vector RAG context."""
+    pred_res = predict_student_success(student)
+    data = generate_recommendation(student, prediction=pred_res.prediction)
+    return RAGRecommendationSchema(**data)
+
 
 @router.get("/{student_id}", response_model=StudentDetail)
 def get_student(student_id: str) -> StudentDetail:
