@@ -56,22 +56,21 @@ export function MetricsOverview({ input }: MetricsOverviewProps) {
   ];
 
   return (
-    <div className="metrics-kpi-grid">
-      {kpis.map((kpi, idx) => {
-        const Icon = kpi.icon;
-        return (
-          <motion.div 
-            key={kpi.title}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: idx * 0.08 }}
-            whileHover={{ y: -3, scale: 1.02 }}
-            className="kpi-card"
-          >
-            <div className="kpi-header">
-              <span className="kpi-title">{kpi.title}</span>
-              <div className={`kpi-icon ${kpi.color}`}>
-                <Icon size={18} />
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      {kpis.map((kpi, idx) => (
+        <motion.div
+          key={kpi.title}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: idx * 0.08 }}
+          whileHover={{ y: -3, scale: 1.01 }}
+          className="p-5 min-h-[155px] rounded-3xl bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 shadow-2xl flex flex-col justify-between relative overflow-hidden"
+        >
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">{kpi.title}</span>
+              <div className={`w-10 h-10 rounded-2xl border flex items-center justify-center shadow-inner ${kpi.bg}`}>
+                {kpi.icon}
               </div>
             </div>
             <div className="kpi-value">{kpi.val}</div>
@@ -94,12 +93,12 @@ export function MetricsOverview({ input }: MetricsOverviewProps) {
               />
             </div>
 
-            <div className="kpi-footer">
-              <span>{kpi.footer}</span>
-            </div>
-          </motion.div>
-        );
-      })}
+          <div className="w-full text-[11px] font-bold text-slate-400 flex items-center justify-between pt-2.5 border-t border-slate-800/50 mt-2">
+            <span>{kpi.footer}</span>
+            <TrendingUp size={12} className="text-slate-500" />
+          </div>
+        </motion.div>
+      ))}
     </div>
   );
 }
