@@ -142,8 +142,37 @@ function calculateFallbackPrediction(input: StudentInput): PredictionResponse {
     probabilities,
     is_temporary: true,
     note: 'Fallback analytical model calculated from real-time student performance metrics.',
+    rag_recommendations: {
+      risk_drivers: [
+        `Attendance (${input.attendance}%)`,
+        `Coding Practice (${input.coding_hours} hrs/wk)`,
+      ],
+      retrieved_documents: [
+        {
+          id: 'fallback_01',
+          category: 'academic_recovery',
+          title: 'Structured Learning & Daily Coding Drills',
+          description: 'Custom learning track for improving attendance and hands-on coding practice.',
+          relevance_score: 0.85,
+          action_items: ['Schedule mentor sync', 'Commit 2h daily coding block'],
+        },
+      ],
+      action_plan: [
+        { day: 1, task: 'Mentor 1-on-1 Alignment Session' },
+        { day: 2, task: 'Complete catch-up coding exercises' },
+        { day: 3, task: 'Submit portfolio project update' },
+      ],
+      resources: [
+        { name: 'Full-Stack Developer Learning Guide', url: 'https://learning.platform', type: 'Guide' },
+      ],
+      rag_metadata: { engine: 'Client Analytical Model' },
+      llm_summary: `Student assessed as ${prediction}. Focus recommended on attendance recovery and daily coding routines.`,
+      llm_coaching_advice: `### Personal Coaching Letter\n\nDear Student,\n\nBased on your metrics (Attendance: ${input.attendance}%, Coding: ${input.coding_hours} hrs/wk), we recommend establishing a consistent daily schedule. Work closely with your mentor to address learning blockers and complete overdue assignments.`,
+      llm_provider: 'Analytical Synthesizer Engine',
+    },
   };
 }
+
 
 export async function fetchStudents(): Promise<StudentProfile[]> {
   try {

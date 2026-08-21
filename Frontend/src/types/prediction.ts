@@ -31,9 +31,43 @@ export type PredictionProbabilities = {
   on_track: number;
 };
 
+export type RAGDocument = {
+  id: string;
+  category: string;
+  title: string;
+  description: string;
+  relevance_score: number;
+  action_items: string[];
+};
+
+export type RAGActionPlanDay = {
+  day: number;
+  task: string;
+};
+
+export type RAGResource = {
+  name: string;
+  url: string;
+  type: string;
+  source_doc?: string;
+};
+
+export type RAGRecommendations = {
+  risk_drivers: string[];
+  retrieved_documents: RAGDocument[];
+  action_plan: RAGActionPlanDay[];
+  resources: RAGResource[];
+  rag_metadata: Record<string, unknown>;
+  llm_summary?: string;
+  llm_coaching_advice?: string;
+  llm_provider?: string;
+};
+
 export type PredictionResponse = {
   prediction: PredictionLabel;
   probabilities: PredictionProbabilities;
   is_temporary?: boolean;
   note?: string;
+  rag_recommendations?: RAGRecommendations;
 };
+
