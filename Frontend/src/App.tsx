@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { Provider } from 'react-redux';
+import { store, useAppDispatch, useAppSelector } from './store';
+import { UIProvider } from './context/UIContext';
 
 import { Header } from './components/Header';
 import { StudentSelectorBar } from './components/StudentSelectorBar';
@@ -9,42 +11,42 @@ import { MetricsOverview } from './components/MetricsOverview';
 import { PredictForm } from './components/PredictForm';
 import { PredictionResult } from './components/PredictionResult';
 import { PipelineFooter } from './components/PipelineFooter';
+import { AmbientBackground } from './components/AmbientBackground';
+import { ToastContainer } from './components/ToastContainer';
 
-import { fetchStudents, predictStudentSuccess } from './api/predictions';
-import type { PredictionResponse, StudentInput, StudentProfile } from './types/prediction';
+import { fetchStudents } from './api/predictions';
+import { loadStudents, setSelectedStudentId } from './store/studentSlice';
+import { setStudentInput, fetchPrediction } from './store/predictionSlice';
+import type { StudentInput, StudentProfile } from './types/prediction';
 
-export default function App() {
-  const [students, setStudents] = useState<StudentProfile[]>([]);
+function MainDashboard() {
+  const dispatch = useAppDispatch();
+  const students = useAppSelector((state) => state.student.students);
+  const selectedStudentId = useAppSelector((state) => state.student.selectedStudentId);
+  const predictionInput = useAppSelector((state) => state.prediction.input);
+  const isSubmitting = useAppSelector((state) => state.prediction.status === 'loading');
+  const predictionResult = useAppSelector((state) => state.prediction.result);
+  const errorMessage = useAppSelector((state) => state.prediction.error);
+
   const [selectedStudent, setSelectedStudent] = useState<StudentProfile | null>(null);
-  const [formState, setFormState] = useState<StudentInput>({
-    attendance: 94.5,
-    assignment_completion: 92.0,
-    test_average: 88.5,
-    coding_hours: 8.5,
-    goals_completed: 5,
-    projects_completed: 3,
-    interview_practice_hours: 4.5,
-  });
 
-  const [predictionResult, setPredictionResult] = useState<PredictionResponse | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isApiConnected, setIsApiConnected] = useState(true);
-
-  // Fetch initial student-wise records on mount
+  // Load students on mount via Redux Async Thunk
   useEffect(() => {
-    async function loadData() {
-      const data = await fetchStudents();
-      setStudents(data);
-      if (data.length > 0) {
-        handleSelectStudent(data[0]);
-      }
+    dispatch(loadStudents());
+  }, [dispatch]);
+
+  // Sync selected student profile
+  useEffect(() => {
+    if (students.length > 0) {
+      const active = students.find((s) => s.id === selectedStudentId) || students[0];
+      setSelectedStudent(active);
     }
-    loadData();
-  }, []);
+  }, [students, selectedStudentId]);
 
   const handleSelectStudent = (student: StudentProfile) => {
     setSelectedStudent(student);
+    dispatch(setSelectedStudentId(student.id));
+
     const input: StudentInput = {
       attendance: student.attendance,
       assignment_completion: student.assignment_completion,
@@ -54,52 +56,20 @@ export default function App() {
       projects_completed: student.projects_completed,
       interview_practice_hours: student.interview_practice_hours,
     };
-    setFormState(input);
-    handlePredict(input);
-  };
 
-  const handleChangeField = <K extends keyof StudentInput>(field: K, value: number) => {
-    setFormState((prev) => {
-      const updated = { ...prev, [field]: value };
-      if (selectedStudent) {
-        setSelectedStudent({
-          ...selectedStudent,
-          [field]: value,
-        });
-      }
-      return updated;
-    });
-  };
-
-  const handlePredict = async (inputToPredict: StudentInput = formState) => {
-    setIsSubmitting(true);
-    setErrorMessage(null);
-
-    try {
-      const result = await predictStudentSuccess(inputToPredict);
-      setPredictionResult(result);
-      if (result.is_temporary) {
-        setIsApiConnected(false);
-      } else {
-        setIsApiConnected(true);
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Prediction request failed';
-      setErrorMessage(message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    dispatch(setStudentInput(input));
+    dispatch(fetchPrediction(input));
   };
 
   const handleSelectPreset = (presetInput: StudentInput) => {
-    setFormState(presetInput);
+    dispatch(setStudentInput(presetInput));
     if (selectedStudent) {
       setSelectedStudent({
         ...selectedStudent,
         ...presetInput,
       });
     }
-    handlePredict(presetInput);
+    dispatch(fetchPrediction(presetInput));
   };
 
   const handleReset = () => {
@@ -109,14 +79,20 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070913] text-slate-100 font-sans selection:bg-indigo-500 selection:text-white bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-950 to-slate-950">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 pb-16">
-        <Header isApiConnected={isApiConnected} onReset={handleReset} />
+    <div className="relative min-h-screen bg-[#070913] text-slate-100 font-sans selection:bg-indigo-500 selection:text-white bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-950 to-slate-950 overflow-x-hidden">
+      {/* Context API & Framer Motion Ambient Background */}
+      <AmbientBackground />
+
+      {/* Context API Toast Notifications */}
+      <ToastContainer />
+
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-6 pb-16">
+        <Header isApiConnected={true} onReset={handleReset} />
 
         {students.length > 0 && (
           <StudentSelectorBar
             students={students}
-            selectedStudentId={selectedStudent?.id || ''}
+            selectedStudentId={selectedStudentId || ''}
             onSelectStudent={handleSelectStudent}
           />
         )}
@@ -125,21 +101,20 @@ export default function App() {
 
         <PresetsBar onSelectPreset={handleSelectPreset} />
 
-        <MetricsOverview input={formState} />
+        <MetricsOverview input={predictionInput} />
 
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           <div className="lg:col-span-5">
             <PredictForm
-              formState={formState}
-              onChangeField={handleChangeField}
+              formState={predictionInput}
               isSubmitting={isSubmitting}
-              onSubmit={() => handlePredict(formState)}
+              onSubmit={() => dispatch(fetchPrediction(predictionInput))}
             />
           </div>
 
           <div className="lg:col-span-7 h-full">
             <PredictionResult
-              studentInput={formState}
+              studentInput={predictionInput}
               result={predictionResult}
               isLoading={isSubmitting}
               errorMessage={errorMessage}
@@ -153,3 +128,12 @@ export default function App() {
   );
 }
 
+export default function App() {
+  return (
+    <Provider store={store}>
+      <UIProvider>
+        <MainDashboard />
+      </UIProvider>
+    </Provider>
+  );
+}

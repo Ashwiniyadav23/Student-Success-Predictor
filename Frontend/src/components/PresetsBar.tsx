@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
 import { AlertTriangle, Clock, Award, Sliders, Zap } from 'lucide-react';
 import type { StudentInput } from '../types/prediction';
-
+import { useAppDispatch } from '../store';
+import { setStudentInput } from '../store/predictionSlice';
+import { useUI } from '../context/UIContext';
 
 type PresetsBarProps = {
-  onSelectPreset: (preset: StudentInput) => void;
+  onSelectPreset?: (preset: StudentInput) => void;
 };
 
 export const PRESETS: Record<string, { label: string; icon: typeof AlertTriangle; bgStyle: string; data: StudentInput }> = {
@@ -67,19 +69,28 @@ export const PRESETS: Record<string, { label: string; icon: typeof AlertTriangle
 };
 
 export function PresetsBar({ onSelectPreset }: PresetsBarProps) {
+  const dispatch = useAppDispatch();
+  const { showToast } = useUI();
+
+  const handleSelect = (label: string, data: StudentInput) => {
+    dispatch(setStudentInput(data));
+    if (onSelectPreset) onSelectPreset(data);
+    showToast(`Loaded "${label}" scenario preset`, 'success');
+  };
+
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.1 }}
-      className="presets-container"
+      className="presets-container flex items-center justify-between gap-4 p-4 rounded-3xl bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 shadow-2xl mb-6 flex-wrap"
     >
-      <div className="presets-label">
-        <Sliders size={16} />
-        <span>Quick Demo Presets:</span>
+      <div className="presets-label flex items-center gap-2 text-xs font-bold text-slate-300">
+        <Sliders size={16} className="text-indigo-400" />
+        <span>Quick Scenario Presets:</span>
       </div>
 
-      <div className="presets-buttons">
+      <div className="presets-buttons flex items-center gap-3.5 flex-wrap">
         {Object.entries(PRESETS).map(([key, preset], idx) => {
           const Icon = preset.icon;
           return (
@@ -90,11 +101,10 @@ export function PresetsBar({ onSelectPreset }: PresetsBarProps) {
               transition={{ duration: 0.3, delay: 0.15 + idx * 0.05 }}
               whileHover={{ y: -2, scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              className={`preset-btn ${preset.bgStyle}`}
-
-              onClick={() => onSelectPreset(preset.data)}
+              className={`preset-btn flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold shadow-md transition-all cursor-pointer ${preset.bgStyle}`}
+              onClick={() => handleSelect(preset.label, preset.data)}
             >
-              <Icon size={15} />
+              <Icon size={14} />
               <span>{preset.label}</span>
             </motion.button>
           );
@@ -103,4 +113,3 @@ export function PresetsBar({ onSelectPreset }: PresetsBarProps) {
     </motion.div>
   );
 }
-
