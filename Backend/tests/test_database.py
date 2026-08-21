@@ -17,6 +17,9 @@ def test_database_models_support_insert_and_relationship() -> None:
 
     with session_local() as session:
         student = Student(
+            id="STU-TEST-999",
+            name="Test Student",
+            email="test.student@example.com",
             attendance=80,
             assignment_completion=75,
             test_average=78,
@@ -26,6 +29,7 @@ def test_database_models_support_insert_and_relationship() -> None:
             interview_practice_hours=3,
             created_at=datetime.utcnow(),
         )
+
         session.add(student)
         session.commit()
         session.refresh(student)

@@ -1,0 +1,64 @@
+name: Continuous Integration (CI)
+
+on:
+  push:
+    branches:
+      - main
+      - backend
+      - frontend
+  pull_request:
+    branches:
+      - main
+      - backend
+
+jobs:
+  backend-test:
+    name: Backend Pytest & API Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: "Backend/requirements.txt"
+
+      - name: Install Backend Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r Backend/requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run Pytest Test Suite
+        run: |
+          cd Backend
+          PYTHONPATH=. pytest --tb=short
+
+  frontend-build:
+    name: Frontend Build & Typecheck
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "Frontend/package-lock.json"
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd Frontend
+          npm ci
+
+      - name: Run TypeScript Typecheck & Production Build
+        run: |
+          cd Frontend
+          npm run build
