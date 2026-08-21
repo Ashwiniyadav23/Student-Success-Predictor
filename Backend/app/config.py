@@ -16,6 +16,10 @@ class Settings:
     environment: str = os.getenv("ENVIRONMENT", "development")
     database_url: str = os.getenv("DATABASE_URL", "")
     model_path: str = os.getenv("MODEL_PATH", "app/ml/student_success_model.pkl")
+    gemini_api_key: str = os.getenv("GEMINI_API_KEY", "")
+    openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
+    llm_provider: str = os.getenv("LLM_PROVIDER", "gemini")
+    llm_model: str = os.getenv("LLM_MODEL", "gemini-1.5-flash")
 
 
 settings = Settings()
